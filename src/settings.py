@@ -278,4 +278,4 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
-DEFAULT_FROM_EMAIL = "Muta Engine Career Page <{0}>".format(EMAIL_HOST_USER)
+DEFAULT_FROM_EMAIL = "Muta Engine <{0}>".format(EMAIL_HOST_USER)
