@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "django_filters",
     "drf_spectacular",
     "django_celery_beat",
+    "src.apps.auth.apps.AuthConfig",
 ]
 
 MIDDLEWARE = [
@@ -155,6 +156,8 @@ MEDIA_URL = "media/"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'authentication.User'
 
 # restframework configuration
 REST_FRAMEWORK = {

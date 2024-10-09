@@ -1,0 +1,23 @@
+from django.db import models
+import uuid
+
+class Status(models.TextChoices):
+    ACTIVE = "active", "Active"
+    INACTIVE = "inactive", "InActive"
+
+# Create your models here.
+class BaseModel(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    status = models.CharField(
+        max_length=30,
+        null=False,
+        blank=False,
+        choices=Status.choices,
+        default=Status.ACTIVE,
+    )
+    is_deleted = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        abstract = True
