@@ -1,3 +1,9 @@
-from django.shortcuts import render
+from rest_framework.viewsets import ModelViewSet
 
-# Create your views here.
+from .serializers import SMTPSerializer
+from .models import SMTP
+
+
+class SMTPViewSet(ModelViewSet):
+    queryset = SMTP.objects.all()
+    serializer_class = SMTPSerializer
