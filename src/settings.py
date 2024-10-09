@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "django_celery_beat",
     "src.apps.auth.apps.AuthConfig",
+    "src.apps.mail",
 ]
 
 MIDDLEWARE = [
