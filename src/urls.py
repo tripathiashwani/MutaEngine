@@ -28,6 +28,7 @@ urlpatterns = [
                     include(
                         [
                             path("mail/", include("src.apps.mail.urls")),
+                            path("company/", include("src.apps.company.urls")),
                         ]
                     ),
                 )

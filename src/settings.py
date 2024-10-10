@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "django_celery_beat",
     "src.apps.auth.apps.AuthConfig",
     "src.apps.mail",
+    "src.apps.company",
 ]
 
 MIDDLEWARE = [
