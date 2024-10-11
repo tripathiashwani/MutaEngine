@@ -1,4 +1,5 @@
 from django.db import models
+from django_ckeditor_5.fields import CKEditor5Field
 
 from src.apps.common.models import BaseModel
 from src.apps.auth.models import UserModelMixin
@@ -35,14 +36,14 @@ class JobApplicantTemplate(BaseModel):
 
 class JobAssignmentTemplate(BaseModel):
     title = models.CharField(max_length=255)
-    content = models.TextField()
+    content = CKEditor5Field('content', config_name='extends')
 
     def __str__(self):
         return self.title
 
 class OfferTemplate(BaseModel):
     title = models.CharField(max_length=255)
-    content = models.TextField()
+    content = CKEditor5Field('content', config_name='extends')
 
     def __str__(self):
         return self.title
@@ -54,6 +55,12 @@ class WorkLocationChoices(models.TextChoices):
     HYBRID = 'hybrid', 'Hybrid'
 
 
+class WorkType(models.TextChoices):
+    FULL_TIME = 'full_time', 'Full_Time'
+    PART_TIME = 'part_time', 'Part_Time'
+    CONTRACT = 'contract', 'Contract'
+    INTERNSHIP = 'internship', 'Internship'
+
 class JobTemplate(BaseModel,UserModelMixin):
     title = models.CharField(max_length=255)
     slug = models.SlugField(unique=True)
@@ -64,8 +71,15 @@ class JobTemplate(BaseModel,UserModelMixin):
         choices=WorkLocationChoices.choices,
         default=WorkLocationChoices.ONSITE,
     )
+    work_type = models.CharField(
+        max_length=255,
+        null=False,
+        blank=False,
+        choices=WorkType.choices,
+        default=WorkType.FULL_TIME
+    )
     position = models.CharField(max_length=255)
-    description = models.TextField()
+    description = CKEditor5Field('description', config_name='extends')
     deadline = models.DateField()
     ctc = models.CharField(max_length=255)
     job_applicant_template = models.ForeignKey(JobApplicantTemplate, on_delete=models.SET_NULL, null=True, blank=True)
