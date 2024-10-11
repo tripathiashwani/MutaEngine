@@ -6,46 +6,59 @@ from email import encoders
 from email.utils import formataddr
 import time
 
-# Your Gmail credentials
+
 company_email = ''  
 company_password = ''      
 
-# Gmail SMTP server configuration
+
 smtp_server = 'smtp.gmail.com'
 smtp_port = 587
 
-# Function to send email
-def send_email(company_name, applicant, to_email, role, assignment, last_date, submission_link, resume_path):
+
+def send_email(company_name, applicant, to_email, role, assignment, last_date, submission_link, resume_path,html_template_path=None):
     subject = f"Assignment for {role} at {company_name}"
     
-    body = f"""
-    Dear {applicant},<br><br>
-    
-    We hope this email finds you well. Below is the assignment for the <strong>{role}</strong> position at <strong>{company_name}</strong>.<br><br>
-    
-    <strong>Assignment Details:</strong><br>
-    {assignment}<br><br>
-    
-    <strong>Submission Deadline:</strong> {last_date}<br>
-    <strong>Submission Link:</strong> <a href="{submission_link}">Submit your assignment here</a><br><br>
-    
-    We look forward to receiving your submission. Should you have any questions, please don't hesitate to reach out.<br><br>
-    
-    Best regards,<br>
-    <strong>{company_name}</strong>
-    {company_email}<br>
-    """
+    if html_template_path:
+        try:
+            with open(html_template_path, 'r', encoding='utf-8') as html_file:
+                body = html_file.read()
+                # Optionally replace placeholders in the HTML template
+                body = (body.replace('{{applicant}}', applicant)
+                            .replace('{{role}}', role)
+                            .replace('{{company_name}}', company_name)
+                )
+        except Exception as e:
+            print(f"Error reading the HTML template: {e}")
+            return
+    else:
+        body = f"""
+        Dear {applicant},<br><br>
+        
+        We hope this email finds you well. Below is the assignment for the <strong>{role}</strong> position at <strong>{company_name}</strong>.<br><br>
+        
+        <strong>Assignment Details:</strong><br>
+        {assignment}<br><br>
+        
+        <strong>Submission Deadline:</strong> {last_date}<br>
+        <strong>Submission Link:</strong> <a href="{submission_link}">Submit your assignment here</a><br><br>
+        
+        We look forward to receiving your submission. Should you have any questions, please don't hesitate to reach out.<br><br>
+        
+        Best regards,<br>
+        <strong>{company_name}</strong>
+        {company_email}<br>
+        """
 
-    # Create message container
+    
     msg = MIMEMultipart()
     msg['From'] = formataddr((company_name, company_email))
     msg['To'] = to_email
     msg['Subject'] = subject
 
-    # Attach the body with HTML content
+   
     msg.attach(MIMEText(body, 'html'))
 
-    # Attach the resume (if provided)
+    
     if resume_path:
         try:
             attachment = open(resume_path, 'rb')
@@ -57,7 +70,7 @@ def send_email(company_name, applicant, to_email, role, assignment, last_date, s
         except Exception as e:
             print(f"Error reading the attachment: {e}")
 
-    # Connect to the Gmail server and send the email
+    
     try:
         server = smtplib.SMTP(smtp_server, smtp_port)
         server.starttls()
@@ -70,14 +83,3 @@ def send_email(company_name, applicant, to_email, role, assignment, last_date, s
 
 
 
-company_name = "XYZ Tech"
-applicant = "John Doe"
-to_email = "johndoe@example.com"
-role = "Back-End Developer"
-assignment = "Please complete the following back-end task using Django."
-last_date = "2024-10-20"
-submission_link = "https://submission-link.com"
-resume_path = "resume.pdf"
-
-# Sending email with assignment details
-send_email(company_name, applicant, to_email, role, assignment, last_date, submission_link, resume_path)
