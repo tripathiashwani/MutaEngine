@@ -12,6 +12,7 @@ cron-descriptor==1.4.5
 cryptography==43.0.0
 Django==5.0.9
 django-celery-beat==2.6.0
+django-ckeditor-5==0.2.13
 django-cors-headers==4.4.0
 django-filter==24.2
 django-timezone-field==7.0

@@ -14,6 +14,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("schema/", SpectacularAPIView.as_view(), name="schema"),
     path("", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
+    path("ckeditor5/", include('django_ckeditor_5.urls')),
     path(
         "schema/redoc/",
         SpectacularRedocView.as_view(url_name="schema"),
