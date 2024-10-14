@@ -6,8 +6,8 @@ from email import encoders
 from email.utils import formataddr
 import os
 
-company_email = 'tashwani475' 
-company_password = 'snabaglflmfwpmje'
+company_email = 'mutaengine.mail' 
+company_password = 'xyz'
 
 smtp_server = 'smtp.gmail.com'
 smtp_port = 587
