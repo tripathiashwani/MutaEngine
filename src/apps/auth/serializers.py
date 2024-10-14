@@ -131,14 +131,9 @@ class PasswordResetVerifySerializer(serializers.Serializer):
 class PasswordResetConfirmSerializer(serializers.Serializer):
     password = serializers.CharField(required=True, allow_blank=False)
     id = serializers.CharField(required=True, allow_blank=False)
-    otp = serializers.CharField(required=True, allow_blank=False)
 
     def validate(self, attrs: dict) -> dict:
         id = attrs.get("id", None)
-        otp = attrs.get("otp", None)
-
-        if otp is None or otp == "":
-            raise serializers.ValidationError("Invalid Request")
 
         try:
             user: User = User.objects.get(id=id)
@@ -146,12 +141,6 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
         except User.DoesNotExist:
             attrs["user"] = None
             raise serializers.ValidationError("User not found")
-
-        try:
-            if int(cache.get(f"{user.id}_otp", None)) != int(attrs.get("otp", None)):
-                raise serializers.ValidationError("Please verify otp first")
-        except TypeError:
-            pass
 
         return super().validate(attrs)
 
