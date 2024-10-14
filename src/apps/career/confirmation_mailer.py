@@ -1,5 +1,6 @@
 from email import encoders
 from email.mime.base import MIMEBase
+import os
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -20,21 +21,7 @@ def send_confirmation_email(company_name, applicant, to_email, role, manager_nam
     subject = f"Offer Acceptance Confirmation for {role} at {company_name}"
 
     # If an HTML template is provided, use that; otherwise use the default body
-    if html_template_path:
-        try:
-            with open(html_template_path, 'r', encoding='utf-8') as html_file:
-                body = html_file.read()
-                # Optionally replace placeholders in the HTML template
-                body = (body.replace('{{applicant}}', applicant)
-                            .replace('{{role}}', role)
-                            .replace('{{company_name}}', company_name)
-                            .replace('{{manager_name}}', manager_name))
-        except Exception as e:
-            print(f"Error reading the HTML template: {e}")
-            return JsonResponse({'message': 'Error reading the HTML template'}, status=500)
-    else:
-        # Default email body if no HTML template is provided
-        body = f"""
+    default_body = f"""
         Dear {applicant},<br><br>
 
         Congratulations on accepting the offer for the <strong>{role}</strong> position at <strong>{company_name}</strong>! We have successfully received your signed offer acceptance letter.<br><br>
@@ -49,6 +36,30 @@ def send_confirmation_email(company_name, applicant, to_email, role, manager_nam
         <strong>{manager_name}</strong><br>
         Hiring manager at {company_name}<br>
         """
+
+
+    if html_template_path and os.path.exists(html_template_path):
+        try:
+            # Read the HTML file content
+            with open(html_template_path, 'r', encoding='utf-8') as html_file:
+                body = html_file.read()
+
+                # Replace placeholders in the HTML template
+                replacements = {
+                    '{{applicant}}': applicant,
+                    '{{role}}': role,
+                    '{{company_name}}': company_name,
+                }
+
+                
+                for placeholder, replacement in replacements.items():
+                    body = body.replace(placeholder, replacement)
+
+        except Exception as e:
+            print(f"Error reading the HTML template: {e}")
+            body = default_body  # Fallback to default if any issue occurs
+    else:
+        body = default_body  # Use default if no HTML file is provided
 
     # Create the email message
     msg = MIMEMultipart()
@@ -78,8 +89,8 @@ def send_confirmation_email(company_name, applicant, to_email, role, manager_nam
         server.sendmail(company_email, to_email, text)
         server.quit()
         print(f"Confirmation email sent to {applicant} at {to_email}")
-        return JsonResponse({'message': 'Confirmation email sent successfully'}, status=200)
+        return JsonResponse({'message': 'success'}, status=200)
     except Exception as e:
         print(f"Failed to send email: {e}")
-        return JsonResponse({'message': 'Failed to send confirmation email'}, status=500)
+        return JsonResponse({'message': 'Failed'}, status=500)
 

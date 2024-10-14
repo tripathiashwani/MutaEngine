@@ -5,8 +5,8 @@ from email.utils import formataddr
 import random
 
 
-company_email = 'tashwani475' 
-company_password = 'snabaglflmfwpmje'   
+company_email = 'mail' 
+company_password = 'password'   
 
 # Gmail SMTP server configuration
 smtp_server = 'smtp.gmail.com'

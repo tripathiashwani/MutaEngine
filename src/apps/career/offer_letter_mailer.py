@@ -6,8 +6,12 @@ from email import encoders
 from email.utils import formataddr
 import os
 
-company_email = 'mutaengine.mail' 
-company_password = 'xyz'
+
+from django.http import JsonResponse
+
+company_email = 'mail' 
+company_password = 'password_for smtp'
+
 
 smtp_server = 'smtp.gmail.com'
 smtp_port = 587
@@ -92,9 +96,11 @@ def send_offer_letter(company_name, applicant, to_email, role, offer_details, ma
         text = msg.as_string()
         server.sendmail(company_email, to_email, text)
         server.quit()
-        print(f"Offer letter sent to {applicant} at {to_email}")
+        print(f"offerletter email sent to {applicant} at {to_email}")
+        return JsonResponse({'message': 'success'}, status=200)
     except Exception as e:
         print(f"Failed to send email: {e}")
+        return JsonResponse({'message': 'Failed'}, status=500)
 
 
 # Example usage
