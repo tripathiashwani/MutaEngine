@@ -13,36 +13,35 @@ class OfferLetterTemplateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OfferTemplate
-        fields = '__all__'
+        exclude = ["is_deleted"]
 
 
 class JobAssignmentTemplateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = JobAssignmentTemplate
-        fields = '__all__'
+        exclude = ["is_deleted"]
 
 
 class TemplateExtraFieldSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TemplateExtraField
-        fields = '__all__'
+        exclude = ["is_deleted"]
 
 class JobApplicantTemplateSerializer(serializers.ModelSerializer):
     template_extra_fields = TemplateExtraFieldSerializer(many=True)
 
     class Meta:
         model = JobApplicantTemplate
-        fields = '__all__'
+        exclude = ["is_deleted"]
 
     def create(self, validated_data):
         template_extra_fields = validated_data.pop('template_extra_fields')
-        
-        if template_extra_fields:
-            template_extra_fields = TemplateExtraField.objects.bulk_create(template_extra_fields)
-
         job_applicant_template = JobApplicantTemplate.objects.create(**validated_data)
-        job_applicant_template.template_extra_fields.set(template_extra_fields)
+        
+        for template_extra_field in template_extra_fields:
+            extra_fields = TemplateExtraField.objects.create(**template_extra_field)
+            job_applicant_template.template_extra_fields.add(extra_fields)
 
         return job_applicant_template
