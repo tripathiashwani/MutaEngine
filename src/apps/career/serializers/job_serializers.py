@@ -1,6 +1,12 @@
 from rest_framework import serializers
 
-from ..models.job import JobTemplate, JobApplicantTemplate, JobAssignmentTemplate, OfferTemplate
+from ..models.job import (
+    JobTemplate, 
+    JobApplicantTemplate, 
+    JobAssignmentTemplate, 
+    TemplateExtraField,
+    OfferTemplate
+)
 
 
 class OfferLetterTemplateSerializer(serializers.ModelSerializer):
@@ -10,3 +16,8 @@ class OfferLetterTemplateSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class JobAssignmentTemplateSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = JobAssignmentTemplate
+        fields = '__all__'
