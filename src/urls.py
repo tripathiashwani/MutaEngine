@@ -30,6 +30,7 @@ urlpatterns = [
                         [
                             path("mail/", include("src.apps.mail.urls")),
                             path("company/", include("src.apps.company.urls")),
+                            path("career/", include("src.apps.career.urls")),
                         ]
                     ),
                 )
