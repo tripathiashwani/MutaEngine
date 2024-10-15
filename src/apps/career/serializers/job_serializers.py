@@ -45,3 +45,38 @@ class JobApplicantTemplateSerializer(serializers.ModelSerializer):
             job_applicant_template.template_extra_fields.add(extra_fields)
 
         return job_applicant_template
+
+
+class JobTemplateWriteSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = JobTemplate
+        exclude = ["is_deleted"]
+
+
+class JobTemplateReadSerializer(serializers.ModelSerializer):
+    job_applicant_template = serializers.SerializerMethodField()
+    job_assignment_template = serializers.SerializerMethodField()
+    offer_template = serializers.SerializerMethodField()
+
+    class Meta:
+        model = JobTemplate
+        exclude = ["is_deleted"]
+    
+    def get_job_applicant_template(self, obj):
+        if obj.job_applicant_template:
+            return JobApplicantTemplateSerializer(obj.job_applicant_template, fields=["id","title"]).data
+        else:
+            return None
+        
+    def get_job_assignment_template(self, obj):
+        if obj.job_assignment_template:
+            return JobAssignmentTemplateSerializer(obj.job_assignment_template, fields=["id","title"]).data
+        else:
+            return None
+        
+    def get_offer_template(self, obj):
+        if obj.offer_template:
+            return OfferLetterTemplateSerializer(obj.offer_template, fields=["id","title"]).data
+        else:
+            return None
