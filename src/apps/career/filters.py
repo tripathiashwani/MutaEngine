@@ -26,3 +26,12 @@ class JobAssignmentTemplateFilterSet(BaseFilterSet):
     class Meta:
         model = JobAssignmentTemplate
         fields = ("title",)
+
+
+class JobApplicantTemplateFilterSet(BaseFilterSet):
+    
+    title = django_filters.CharFilter(field_name="title", lookup_expr="icontains")
+
+    class Meta:
+        model = JobApplicantTemplate
+        fields = ("title",)

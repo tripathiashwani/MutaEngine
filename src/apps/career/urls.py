@@ -3,6 +3,7 @@ from django.urls import path
 from .views.job_views import (
     OfferLetterTemplateViewSet,
     JobAssignmentTemplateViewSet,
+    JobApplicantTemplateViewSet,
 )
 
 urlpatterns = [
@@ -25,5 +26,15 @@ urlpatterns = [
         "assignment/template/<uuid:pk>/", 
         JobAssignmentTemplateViewSet.as_view({"get": "retrieve", "patch": "update", "put": "update", "delete": "destroy"}), 
         name="job-assignment-template-detail"
+    ),
+    path(
+        "applicant/template/", 
+        JobApplicantTemplateViewSet.as_view({"get": "list", "post": "create"}), 
+        name="job-applicant-template"
+    ),
+    path(
+        "applicant/template/<uuid:pk>/", 
+        JobApplicantTemplateViewSet.as_view({"get": "retrieve", "patch": "update", "put": "update", "delete": "destroy"}), 
+        name="job-applicant-template-detail"
     ),
 ]
