@@ -6,14 +6,8 @@ from drf_spectacular.types import OpenApiTypes
 from .serializers import CompanySerailizer
 from .models import Company
 
-class CompanyCreateListView(generics.ListCreateAPIView):
-    permission_classes = []
-    authentication_classes = []
+class CompanyCreateView(generics.CreateAPIView):
     serializer_class = CompanySerailizer
-
-    def get_queryset(self):
-        company = Company.objects.all()
-        return company
 
     @extend_schema(
         request=OpenApiTypes.OBJECT,
@@ -52,20 +46,34 @@ class CompanyCreateListView(generics.ListCreateAPIView):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+class CompanyListView(generics.ListAPIView):
+    permission_classes = []
+    authentication_classes = []
+    serializer_class = CompanySerailizer
+
+    def get_queryset(self):
+        company = Company.objects.all()
+        return company
+
     @extend_schema(
         responses={200: OpenApiTypes.OBJECT},
         examples=[
             OpenApiExample(
                 'Response',
-                value={
-                    "status": "string",
-                    "name": "string",
-                    "address": "string",
-                    "logo": "image file",
-                    "email": "email",
-                    "phone": "phone number",
-                    "linkedin": "url"
-                },
+                value=[
+                    {
+                        "id": "uuid",
+                        "status": "string",
+                        "created_at": "datetime",
+                        "updated_at": "datetime",
+                        "name": "string",
+                        "address": "string",
+                        "logo": "image file",
+                        "email": "email",
+                        "phone": "phone number",
+                        "linkedin": "url"
+                    }
+                ],
                 response_only=True,
             ),
         ]

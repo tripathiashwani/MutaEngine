@@ -1,5 +1,6 @@
 from django.db import models
 from django_ckeditor_5.fields import CKEditor5Field
+from django.utils.text import slugify
 
 from src.apps.common.models import BaseModel
 from src.apps.auth.models import UserModelMixin
@@ -63,7 +64,7 @@ class WorkType(models.TextChoices):
 
 class JobTemplate(BaseModel,UserModelMixin):
     title = models.CharField(max_length=255)
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, max_length=150, blank=True)
     work_location = models.CharField(
         max_length=255,
         null=False,
@@ -78,7 +79,7 @@ class JobTemplate(BaseModel,UserModelMixin):
         choices=WorkType.choices,
         default=WorkType.FULL_TIME
     )
-    position = models.CharField(max_length=255)
+    department = models.CharField(max_length=255)
     description = CKEditor5Field('description', config_name='extends')
     deadline = models.DateField()
     ctc = models.CharField(max_length=255)
@@ -88,3 +89,8 @@ class JobTemplate(BaseModel,UserModelMixin):
 
     def __str__(self):
         return self.title
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(str(self.title))
+        return super().save(*args, **kwargs)
