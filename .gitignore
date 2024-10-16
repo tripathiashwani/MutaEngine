@@ -162,3 +162,7 @@ cython_debug/
 #.idea/
 
 /media
+
+
+# Ignore src folder
+src/apps/career/private.py

@@ -127,7 +127,6 @@ class UserUpdateView(generics.UpdateAPIView):
     def get_queryset(self):
         user = self.request.user
         pk = self.kwargs.get("pk")
-
         if pk == user.pk:
             return User.objects.filter(pk=pk)
 

@@ -7,11 +7,9 @@ from email.mime.text import MIMEText
 from email.utils import formataddr
 
 from django.http import JsonResponse
-
-
-data = ''
-company_email = data.company_email 
-company_password = data.company_password      
+from . import private
+company_email = private.company_email
+company_password = private.company_password   
 
 smtp_server = 'smtp.gmail.com'
 smtp_port = 587

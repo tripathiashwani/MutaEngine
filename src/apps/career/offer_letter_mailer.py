@@ -9,8 +9,9 @@ import os
 
 from django.http import JsonResponse
 
-company_email = 'mail' 
-company_password = 'password_for smtp'
+from . import private
+company_email = private.company_email
+company_password = private.company_password   
 
 
 smtp_server = 'smtp.gmail.com'

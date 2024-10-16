@@ -10,7 +10,6 @@ class CompanyCreateListView(generics.ListCreateAPIView):
     permission_classes = []
     authentication_classes = []
     serializer_class = CompanySerailizer
-
     def get_queryset(self):
         company = Company.objects.all()
         return company

@@ -5,8 +5,9 @@ from email.utils import formataddr
 import random
 
 
-company_email = 'mail' 
-company_password = 'password'   
+from . import private
+company_email = private.company_email
+company_password = private.company_password   
 
 # Gmail SMTP server configuration
 smtp_server = 'smtp.gmail.com'
@@ -60,7 +61,7 @@ def send_otp_mail(employee_name, to_email, otp, company_name):
 # Test the OTP email functionality
 if __name__ == "__main__":
     employee_name = "John Doe"
-    to_email = "subodhmishra015@gmail.com"
+    to_email = "subodhmishra015gmail.com"
     otp = generate_otp()
     company_name = "Mutaengine"
     send_otp_mail(employee_name, to_email, otp, company_name)

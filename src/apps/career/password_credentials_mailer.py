@@ -3,9 +3,9 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import formataddr
 
-# Your Gmail credentials
-company_email = 'your_email@gmail.com'  
-company_password = 'your_password'      
+from . import private
+company_email = private.company_email
+company_password = private.company_password       
 
 # Gmail SMTP server configuration
 smtp_server = 'smtp.gmail.com'

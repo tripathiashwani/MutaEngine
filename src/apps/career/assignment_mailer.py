@@ -7,9 +7,9 @@ from email.utils import formataddr
 import os
 
 from django.http import JsonResponse
-
-company_email = 'tashwani475' 
-company_password = 'snabaglflmfwpmj'
+from . import private
+company_email = private.company_email
+company_password = private.company_password
 
 smtp_server = 'smtp.gmail.com'
 smtp_port = 587
