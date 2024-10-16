@@ -11,7 +11,7 @@ from .views.job_views import (
     JobTemplateDeleteView,
 )
 
-from .views.applicant_views import JobApplicantViewSet
+from .views.applicant_views import JobApplicantViewSet, AssignmentSubmissionViewSet
 
 urlpatterns = [
     path(
@@ -51,4 +51,14 @@ urlpatterns = [
     path("job/<uuid:pk>/delete/", JobTemplateDeleteView.as_view(), name="job-template-delete"),
     path("applicant/",JobApplicantViewSet.as_view({"get": "list", "post": "create"}), name="applicant-view-set"),
     path("applicant/<uuid:pk>/", JobApplicantViewSet.as_view({"get": "retrieve",}), name="applicant-detail-view-set"),
+    path(
+        "assignment/submission/", 
+        AssignmentSubmissionViewSet.as_view({"get": "list", "post": "create"}), 
+        name="assignment-submission-view-set"
+    ),
+    path(
+        "assignment/submission/<uuid:pk>/",
+        AssignmentSubmissionViewSet.as_view({"get": "retrieve",}), 
+        name="assignment-submission-detail-view-set"
+    ),
 ]

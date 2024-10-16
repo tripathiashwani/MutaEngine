@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from ..models.applicant import JobApplicant, JobApplicantExtraField
+from ..models.applicant import JobApplicant, JobApplicantExtraField, AssignmentSubmission
 
 class JobApplicantExtraFieldSerializer(serializers.ModelSerializer):
 
@@ -25,3 +25,10 @@ class JobApplicantSerializer(serializers.ModelSerializer):
                 extra_field = JobApplicantExtraField.objects.create(**extra_field_data, job_applicant=job_applicant)
         
         return super().create(validated_data)
+
+
+class AssignmentSubmissionsSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = AssignmentSubmission
+        exclude = ["is_deleted"]
