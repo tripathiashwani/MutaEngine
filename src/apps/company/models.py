@@ -32,6 +32,6 @@ class Company(BaseModel):
     facebook = models.URLField(null=True, blank=True)  
     twitter = models.URLField(null=True, blank=True)  
     instagram = models.URLField(null=True, blank=True)  
-
+    
     def __str__(self):
         return self.name

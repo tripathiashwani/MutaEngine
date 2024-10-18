@@ -5,18 +5,14 @@ from .models import Company,Address
 class AddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = Address
-        fields = ['street', 'city', 'state', 'postal_code', 'country']
+        fields = "__all__"
 
 class CompanySerializer(serializers.ModelSerializer):
     address = AddressSerializer()
 
     class Meta:
         model = Company
-        fields = [
-            'name', 'description', 'address', 'logo', 'email', 'phone', 'linkedin', 
-            'location', 'founded_date', 'industry', 'number_of_employees', 
-            'website', 'facebook', 'twitter', 'instagram'
-        ]
+        fields = "__all__"
 
     def update(self, instance, validated_data):
         address_data = validated_data.pop('address', None)
