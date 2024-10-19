@@ -6,8 +6,13 @@ from email import encoders
 from email.utils import formataddr
 import os
 
-company_email = ''  
-company_password = ''      
+
+from django.http import JsonResponse
+
+from . import private
+company_email = private.company_email
+company_password = private.company_password   
+
 
 smtp_server = 'smtp.gmail.com'
 smtp_port = 587
@@ -41,6 +46,22 @@ def send_offer_letter(company_name, applicant, to_email, role, offer_details, ma
             # Read the HTML file content
             with open(html_template_path, 'r', encoding='utf-8') as html_file:
                 body = html_file.read()
+
+                # Replace placeholders in the HTML template
+                replacements = {
+                    '{{ applicant }}': applicant,
+                    '{{ role }}': role,
+                    '{{ company_name }}': company_name,
+                    '{{ manager_name }}': manager_name,
+                    '{{ start_date }}': 'N/A', 
+                    '{{ salary }}': offer_details.split(':')[1].strip(),  
+                    '{{ location }}': 'Remote'  
+                }
+
+                
+                for placeholder, replacement in replacements.items():
+                    body = body.replace(placeholder, replacement)
+
         except Exception as e:
             print(f"Error reading the HTML template: {e}")
             body = default_body  # Fallback to default if any issue occurs
@@ -76,10 +97,24 @@ def send_offer_letter(company_name, applicant, to_email, role, offer_details, ma
         text = msg.as_string()
         server.sendmail(company_email, to_email, text)
         server.quit()
-        print(f"Offer letter sent to {applicant} at {to_email}")
+        print(f"offerletter email sent to {applicant} at {to_email}")
+        return JsonResponse({'message': 'success'}, status=200)
     except Exception as e:
         print(f"Failed to send email: {e}")
+        return JsonResponse({'message': 'Failed'}, status=500)
 
 
 # Example usage
-# send_offer_letter("Company XYZ", "John Doe", "johndoe@example.com", "Software Engineer", "Annual Salary: $100,000", "Jane Smith", offer_letter_path="path/to/offer_letter.pdf", html_template_path="path/to/template.html")
+if __name__ == "__main__":
+    company_name = "Mutaengine"
+    applicant = "John Doe"
+    to_email = "csaifw21004@glbitm.ac.in"
+    role = "Software Engineer"
+    offer_details = "Annual Salary: $100,000"
+    manager_name = "Jane Smith"
+    current_directory = os.path.dirname(__file__)
+    offer_letter_path = os.path.join(current_directory, "test_file.pdf")
+    html_template_path = os.path.join(current_directory, "template.html")
+
+
+    send_offer_letter(company_name, applicant, to_email, role, offer_details, manager_name, offer_letter_path, html_template_path)
