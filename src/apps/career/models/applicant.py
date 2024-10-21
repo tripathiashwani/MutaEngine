@@ -25,3 +25,15 @@ class JobApplicantExtraField(BaseModel):
 
     def __str__(self):
         return f"Extra Field for {self.job_applicant.first_name} {self.job_applicant.last_name}"
+
+
+class AssignmentSubmission(BaseModel):
+    first_name = models.CharField(max_length=255, null=False, blank=False)
+    last_name = models.CharField(max_length=255, null=False, blank=False)
+    applicant_id = models.UUIDField()
+    deployment_url = models.URLField()
+    project_github_url = models.URLField()
+    video_url = models.URLField()
+
+    def __str__(self) -> str:
+        return f'{self.first_name} {self.last_name} assignment submission'   
