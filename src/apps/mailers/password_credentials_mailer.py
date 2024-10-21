@@ -3,7 +3,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import formataddr
 
-from . import private
+from ..career import private
 company_email = private.company_email
 company_password = private.company_password       
 
