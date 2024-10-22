@@ -1,11 +1,12 @@
 from rest_framework import serializers
-from ..tasks import send_assignment_email  
+from ..tasks import send_assignment_email_task  
 import os
 from django.core.files.storage import default_storage
 from django.conf import settings
 from ..models.applicant import JobApplicant, JobApplicantExtraField, AssignmentSubmission
 
-from company.models import Company
+
+from src.apps.company.models import Company
 
 class JobApplicantExtraFieldSerializer(serializers.ModelSerializer):
 
@@ -35,11 +36,11 @@ class JobApplicantSerializer(serializers.ModelSerializer):
 
         
         request = self.context['request']
-        company_name = Company.name
+        company_name = "Mutaengine"
         applicant_name = f"{job_applicant.first_name} {job_applicant.last_name}"
         to_email = job_applicant.email
         role = job_applicant.job_template.title  
-        last_date = job_applicant.job_template.last_date 
+        last_date = request.data.get('last_date')
         assignment_detail_link = request.data.get('assignment_detail_link')
         application_id = job_applicant.id
         resume_path = None  
@@ -61,9 +62,21 @@ class JobApplicantSerializer(serializers.ModelSerializer):
             path = default_storage.save(resume_file_path, resume_file)
             resume_path = os.path.join(settings.MEDIA_ROOT, path)
 
-       
-        send_assignment_email.apply_async((company_name, applicant_name, to_email, role, last_date, assignment_detail_link, application_id, resume_path, html_template_path), countdown=12*3600)
-
+    #    send_assignment(company_name, applicant, to_email, role, last_date, assignment_detail_link, application_id, resume_path=None, html_template_path=None)
+        send_assignment_email_task.apply_async(
+            (
+                company_name, 
+                applicant_name, 
+                to_email, 
+                role, 
+                last_date, 
+                assignment_detail_link, 
+                application_id, 
+                resume_path if resume_path else None,  # Ensure it's passed as None if not present
+                html_template_path if html_template_path else None  # Ensure it's passed as None if not present
+            ), 
+            countdown=3
+        )
 
         return job_applicant
 
@@ -73,3 +86,8 @@ class AssignmentSubmissionsSerializer(serializers.ModelSerializer):
     class Meta:
         model = AssignmentSubmission
         exclude = ["is_deleted"]
+# send_offer_letter(company_name, applicant, to_email, role,offer_details, manager_name, offer_letter_path, html_template_path)
+    def create(self, validated_data):
+        assignment_submission = AssignmentSubmission.objects.create(**validated_data)
+
+        return assignment_submission

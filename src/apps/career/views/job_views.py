@@ -61,6 +61,8 @@ class JobApplicantTemplateViewSet(ModelViewSet):
 
 
 class JobTemplateCreateView(generics.CreateAPIView):
+    permission_classes = []
+    authentication_classes = []
     serializer_class = JobTemplateWriteSerializer
 
 

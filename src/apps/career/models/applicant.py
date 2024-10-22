@@ -13,7 +13,7 @@ class JobApplicant(BaseModel):
     total_yoe = models.CharField(max_length=10, help_text="Total years of experience")
     skills = models.CharField(max_length=255, help_text="Comma-separated skills")
     linkedin = models.URLField()
-    resume = models.FileField(upload_to=get_upload_folder)
+    resume = models.FileField(upload_to=get_upload_folder,blank=True, null=True)
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"

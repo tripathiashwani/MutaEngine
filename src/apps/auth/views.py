@@ -23,6 +23,7 @@ from .two_fa_handlers import OTPACTION, TwoFAHandler
 
 
 class CreateUserView(generics.CreateAPIView):
+    print("CreateUserView")
     permission_classes = [permissions.AllowAny]
     serializer_class = CreateUserSerializer
 
@@ -36,6 +37,7 @@ class CreateUserView(generics.CreateAPIView):
         }
     )
     def post(self, request, *args, **kwargs):
+        print(request.data)
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
@@ -43,7 +45,7 @@ class CreateUserView(generics.CreateAPIView):
         return Response(
             {"msg": "User registration successful"},
             status=status.HTTP_201_CREATED,
-            headers=headers,
+            headers=headers
         )
 
 
