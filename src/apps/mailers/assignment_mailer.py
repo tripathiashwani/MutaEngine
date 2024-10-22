@@ -7,7 +7,7 @@ from email.utils import formataddr
 import os
 
 from django.http import JsonResponse
-from . import private
+from ..career import private
 company_email = private.company_email
 company_password = private.company_password
 
@@ -15,17 +15,22 @@ smtp_server = 'smtp.gmail.com'
 smtp_port = 587
 
 
-def send_assignment(company_name, applicant, to_email, role, assignment, last_date, submission_link, resume_path=None, html_template_path=None):
+def send_assignment(company_name, applicant, to_email, role, last_date, assignment_detail_link, application_id, resume_path=None, html_template_path=None):
     subject = f"Assignment for {role} at {company_name}"
     
     # Default body if no HTML file is provided
     default_body = f"""
         Dear {applicant},<br><br>
         
-        We hope this email finds you well. Below is the assignment for the <strong>{role}</strong> position at <strong>{company_name}</strong>.<br><br>
-        
+        We hope this email finds you well. 
+        Attached below are the details of the assignment for the <strong>{role}</strong> position at <strong>{company_name}</strong>.<br><br>
+        kindly submit your assignment before the deadline.<br><br>
+        Your application ID is: {application_id}<br><br>
+        strong>Assignment Objective:</strong><br>
+        we want to evaluate your problem solving skills, your ability to build secure and scalable systems. This assignment is designed to assess how you approach towards real world problems,
+        code quality and best practices.<br><br>
         <strong>Assignment Details:</strong><br>
-        {assignment}<br><br>
+        {assignment_detail_link}<br><br>
         
         <strong>Submission Deadline:</strong> {last_date}<br>
         <strong>Submission Link:</strong> <a href="{submission_link}">Submit your assignment here</a><br><br>

@@ -9,7 +9,7 @@ import os
 
 from django.http import JsonResponse
 
-from . import private
+from ..career import private
 company_email = private.company_email
 company_password = private.company_password   
 

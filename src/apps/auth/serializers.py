@@ -68,11 +68,10 @@ class UserUpdateSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = User
         exclude = (
-            "otp",
+            "otp",  
             "otp_created_at",
             "otp_tries",
             "password",

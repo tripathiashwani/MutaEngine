@@ -5,9 +5,9 @@ from email.mime.base import MIMEBase
 from email import encoders
 from email.utils import formataddr
 import os
-
-company_email = ''  
-company_password = ''      
+from ..career import private
+company_email = private.company_email  
+company_password = private.company_password
 
 smtp_server = 'smtp.gmail.com'
 smtp_port = 587

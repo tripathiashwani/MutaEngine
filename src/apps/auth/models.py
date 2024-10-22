@@ -1,5 +1,5 @@
 from django.contrib.auth.base_user import BaseUserManager
-from django.contrib.auth.models import AbstractUser, Group
+from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -11,7 +11,7 @@ from src.apps.common.utils import get_upload_folder, image_validate
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password, **extra_fields):
         """
-        Creates and saves a User with the given username.
+        Creates and saves a User with the given email and password.
         """
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
@@ -20,8 +20,7 @@ class CustomUserManager(BaseUserManager):
 
     def create_superuser(self, email, password, **extra_fields):
         """
-        Creates and saves a superuser with the given email, date of
-        birth and password.
+        Creates and saves a superuser with the given email and password.
         """
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
@@ -29,6 +28,10 @@ class CustomUserManager(BaseUserManager):
             raise ValueError("superuser must have is_staff=True.")
         if extra_fields.get("is_superuser") is not True:
             raise ValueError("superuser must have is_superuser=True")
+        
+        domain = email.split('@')[-1]  
+        if domain != "mutaengine.cloud":
+         raise ValueError("Superuser email must be from the 'mutaengine.cloud' domain.")
 
         return self.create_user(email, password, **extra_fields)
 
@@ -63,13 +66,19 @@ class UserModelMixin(models.Model):
         abstract = True
 
 class Role(Group):
-    title = models.CharField(max_length=255, null=False, blank=False)
+    title = models.CharField(max_length=255, null=False, blank=False, unique=True)
     status = models.CharField(
         max_length=255, blank=False, null=False, choices=Status.choices, default=Status.ACTIVE
     )
+    responsibilities = models.TextField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+    parent_role = models.ForeignKey('self', null=True, blank=True, on_delete=models.SET_NULL)
     is_deleted = models.BooleanField(default=False)
+    deleted_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    created_by = models.ForeignKey(User, null=True, blank=True, related_name='roles_created', on_delete=models.SET_NULL)
+    updated_by = models.ForeignKey(User, null=True, blank=True, related_name='roles_updated', on_delete=models.SET_NULL)
 
 
     def __str__(self):
