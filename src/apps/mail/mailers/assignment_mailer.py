@@ -8,15 +8,9 @@ from src import settings
 import os
 
 from django.http import JsonResponse
-<<<<<<<< HEAD:src/apps/applicant/assignment_mailer.py
 # from . import private
 # company_email = private.company_email
 # company_password = private.company_password
-========
-from ..career import private
-company_email = private.company_email
-company_password = private.company_password
->>>>>>>> 91c80a0938c66dff24b30473094044078ee2c680:src/apps/mailers/assignment_mailer.py
 
 # smtp_server = 'smtp.gmail.com'
 # smtp_port = 587
