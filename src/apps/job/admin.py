@@ -1,17 +1,13 @@
 from django.contrib import admin
 
-from .models.applicant import JobApplicant, JobApplicantExtraField
-from .models.job import (
+from .models import (
     JobApplicantTemplate,
     JobAssignmentTemplate, 
     JobTemplate, 
     OfferTemplate, 
     TemplateExtraField
 )
-
-admin.site.register(JobApplicant)
-
-admin.site.register(JobApplicantExtraField)
+# Register your models here.
 
 admin.site.register(JobApplicantTemplate)
 

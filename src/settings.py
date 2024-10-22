@@ -36,7 +36,8 @@ INSTALLED_APPS = [
     "src.apps.auth.apps.AuthConfig",
     "src.apps.mail",
     "src.apps.company",
-    "src.apps.career",
+    "src.apps.job",
+    "src.apps.applicant",
 ]
 
 MIDDLEWARE = [

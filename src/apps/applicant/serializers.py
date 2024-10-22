@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from ..models.applicant import JobApplicant, JobApplicantExtraField, AssignmentSubmission
+from .models import JobApplicant, JobApplicantExtraField, AssignmentSubmission
 
 class JobApplicantExtraFieldSerializer(serializers.ModelSerializer):
 
@@ -31,4 +31,24 @@ class AssignmentSubmissionsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AssignmentSubmission
-        exclude = ["is_deleted"]
+        exclude = ["is_deleted",]
+
+    def create(self, validated_data):
+        appicant_id = validated_data.get('applicant_id')
+        try:
+            applicant = JobApplicant.objects.get(id=appicant_id)
+        except JobApplicant.DoesNotExist:
+            raise serializers.ValidationError("Job applicant not found")
+
+        assignment_submitted = AssignmentSubmission.objects.create(**validated_data)
+
+        applicant.assignment_submitted = True
+        applicant.save()
+
+        return assignment_submitted
+
+class OfferletterSubmission(serializers.ModelSerializer):
+
+    class Meta:
+        model = JobApplicant
+        fields = ['id', 'signed_offer_letter']

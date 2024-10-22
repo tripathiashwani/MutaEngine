@@ -1,8 +1,8 @@
 from rest_framework import exceptions
 from rest_framework.viewsets import ModelViewSet
 
-from ..serializers.applicant_serializers import JobApplicantSerializer, AssignmentSubmissionsSerializer
-from ..models.applicant import JobApplicant, AssignmentSubmission
+from .serializers import JobApplicantSerializer, AssignmentSubmissionsSerializer
+from .models import JobApplicant, AssignmentSubmission
 
 
 class JobApplicantViewSet(ModelViewSet):

@@ -6,36 +6,39 @@ from email import encoders
 from email.utils import formataddr
 import os
 
+
 from django.http import JsonResponse
-from . import private
+
+from ..career import private
 company_email = private.company_email
-company_password = private.company_password
+company_password = private.company_password   
+
 
 smtp_server = 'smtp.gmail.com'
 smtp_port = 587
 
 
-def send_assignment(company_name, applicant, to_email, role, assignment, last_date, submission_link, resume_path=None, html_template_path=None):
-    subject = f"Assignment for {role} at {company_name}"
+def send_offer_letter(company_name, applicant, to_email, role, offer_details, manager_name, offer_letter_path=None, html_template_path=None):
+    subject = f"Offer Letter for {role} at {company_name}"
     
     # Default body if no HTML file is provided
     default_body = f"""
-        Dear {applicant},<br><br>
-        
-        We hope this email finds you well. Below is the assignment for the <strong>{role}</strong> position at <strong>{company_name}</strong>.<br><br>
-        
-        <strong>Assignment Details:</strong><br>
-        {assignment}<br><br>
-        
-        <strong>Submission Deadline:</strong> {last_date}<br>
-        <strong>Submission Link:</strong> <a href="{submission_link}">Submit your assignment here</a><br><br>
-        
-        We look forward to receiving your submission. Should you have any questions, please don't hesitate to reach out.<br><br>
-        
-        Best regards,<br>
-        <strong>{company_name}</strong><br>
-        {company_email}
-        """
+    Dear {applicant},<br><br>
+    
+    We are pleased to extend an offer for the <strong>{role}</strong> position at <strong>{company_name}</strong>! Below are the details of your offer:<br><br>
+    
+    <strong>Offer Details:</strong><br>
+    {offer_details}<br><br>
+    
+    We are excited to have you on board and look forward to your acceptance.<br><br>
+    
+    If you have any questions, feel free to reach out to us.<br><br>
+    
+    Best regards,<br>
+    <strong>{manager_name}</strong><br>
+    Hiring Manager at {company_name}<br>
+    {company_email}<br>
+    """
 
     # Check if an HTML template path is provided
     if html_template_path and os.path.exists(html_template_path):
@@ -46,12 +49,13 @@ def send_assignment(company_name, applicant, to_email, role, assignment, last_da
 
                 # Replace placeholders in the HTML template
                 replacements = {
-                    '{{applicant}}': applicant,
-                    '{{role}}': role,
-                    '{{company_name}}': company_name,
-                    '{{assignment}}': assignment,
-                    '{{last_date}}': last_date,
-                    '{{submission_link}}': f'<a href="{submission_link}">Submit your assignment here</a>',
+                    '{{ applicant }}': applicant,
+                    '{{ role }}': role,
+                    '{{ company_name }}': company_name,
+                    '{{ manager_name }}': manager_name,
+                    '{{ start_date }}': 'N/A', 
+                    '{{ salary }}': offer_details.split(':')[1].strip(),  
+                    '{{ location }}': 'Remote'  
                 }
 
                 
@@ -70,16 +74,17 @@ def send_assignment(company_name, applicant, to_email, role, assignment, last_da
     msg['To'] = to_email
     msg['Subject'] = subject
 
+    # Attach the body as HTML
     msg.attach(MIMEText(body, 'html'))
 
-    
-    if resume_path and os.path.exists(resume_path):
+    # Handle offer letter attachment if provided
+    if offer_letter_path and os.path.exists(offer_letter_path):
         try:
-            with open(resume_path, 'rb') as attachment:
+            with open(offer_letter_path, 'rb') as attachment:
                 part = MIMEBase('application', 'octet-stream')
                 part.set_payload(attachment.read())
                 encoders.encode_base64(part)
-                part.add_header('Content-Disposition', f'attachment; filename={os.path.basename(resume_path)}')
+                part.add_header('Content-Disposition', f'attachment; filename={os.path.basename(offer_letter_path)}')
                 msg.attach(part)
         except Exception as e:
             print(f"Error reading the attachment: {e}")
@@ -92,7 +97,7 @@ def send_assignment(company_name, applicant, to_email, role, assignment, last_da
         text = msg.as_string()
         server.sendmail(company_email, to_email, text)
         server.quit()
-        print(f"assignment sent to {applicant} at {to_email}")
+        print(f"offerletter email sent to {applicant} at {to_email}")
         return JsonResponse({'message': 'success'}, status=200)
     except Exception as e:
         print(f"Failed to send email: {e}")
@@ -101,16 +106,15 @@ def send_assignment(company_name, applicant, to_email, role, assignment, last_da
 
 # Example usage
 if __name__ == "__main__":
-    company_name = "TechCorp"
+    company_name = "Mutaengine"
     applicant = "John Doe"
-    to_email = "applicant@example.com"
+    to_email = "csaifw21004@glbitm.ac.in"
     role = "Software Engineer"
-    assignment = "Please complete the coding challenge attached."
-    last_date = "October 20, 2024"
-    submission_link = "http://submissionlink.com"
-    
+    offer_details = "Annual Salary: $100,000"
+    manager_name = "Jane Smith"
     current_directory = os.path.dirname(__file__)
-    resume_path = os.path.join(current_directory, "test_file.pdf")  # Path to your PDF file
-    html_template_path = os.path.join(current_directory, "assignment_template.html")  # Path to your HTML template
+    offer_letter_path = os.path.join(current_directory, "test_file.pdf")
+    html_template_path = os.path.join(current_directory, "template.html")
 
-    send_assignment(company_name, applicant, to_email, role, assignment, last_date, submission_link, resume_path, html_template_path)
+
+    send_offer_letter(company_name, applicant, to_email, role, offer_details, manager_name, offer_letter_path, html_template_path)
