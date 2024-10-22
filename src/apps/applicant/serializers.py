@@ -5,7 +5,7 @@ from django.core.files.storage import default_storage
 from django.conf import settings
 from .models import JobApplicant, JobApplicantExtraField, AssignmentSubmission
 
-from company.models import Company
+from src.apps.company.models import Company
 
 class JobApplicantExtraFieldSerializer(serializers.ModelSerializer):
 
