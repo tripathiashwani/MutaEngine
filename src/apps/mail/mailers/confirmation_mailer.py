@@ -8,9 +8,15 @@ from email.utils import formataddr
 from src import settings
 
 from django.http import JsonResponse
+<<<<<<<< HEAD:src/apps/applicant/confirmation_mailer.py
 # from ..career import private
 # company_email = private.company_email
 # company_password = private.company_password   
+========
+from ..career import private
+company_email = private.company_email
+company_password = private.company_password   
+>>>>>>>> 91c80a0938c66dff24b30473094044078ee2c680:src/apps/mailers/confirmation_mailer.py
 
 # smtp_server = 'smtp.gmail.com'
 # smtp_port = 587

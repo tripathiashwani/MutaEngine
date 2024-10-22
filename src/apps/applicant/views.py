@@ -4,7 +4,6 @@ from rest_framework.viewsets import ModelViewSet
 from .serializers import JobApplicantSerializer, AssignmentSubmissionsSerializer
 from .models import JobApplicant, AssignmentSubmission
 
-
 class JobApplicantViewSet(ModelViewSet):
     permission_classes = []
     authentication_classes = []
