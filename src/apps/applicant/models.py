@@ -2,7 +2,7 @@ from django.db import models
 
 from src.apps.common.models import BaseModel
 from src.apps.common.utils import get_upload_folder
-from src.apps.career.models.job import JobTemplate, TemplateExtraField
+from src.apps.job.models import JobTemplate, TemplateExtraField
 
 class JobApplicant(BaseModel):
     job_template = models.ForeignKey(JobTemplate, on_delete=models.CASCADE)
@@ -14,6 +14,12 @@ class JobApplicant(BaseModel):
     skills = models.CharField(max_length=255, help_text="Comma-separated skills")
     linkedin = models.URLField()
     resume = models.FileField(upload_to=get_upload_folder)
+    assignment_sent = models.BooleanField(default=False)
+    assignment_submitted = models.BooleanField(default=False)
+    offer_letter_sent = models.BooleanField(default=False)
+    offer_letter_submitted = models.BooleanField(default=False)
+    signed_offer_letter = models.FileField(null=True, blank=True)
+    applicant_accepted = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"

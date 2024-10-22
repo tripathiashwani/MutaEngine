@@ -5,14 +5,21 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import formataddr
+from src import settings
 
 from django.http import JsonResponse
-from ..career import private
-company_email = private.company_email
-company_password = private.company_password   
+# from ..career import private
+# company_email = private.company_email
+# company_password = private.company_password
 
-smtp_server = 'smtp.gmail.com'
-smtp_port = 587
+# smtp_server = 'smtp.gmail.com'
+# smtp_port = 587
+
+company_email = settings.EMAIL_HOST_USER
+company_password = settings.EMAIL_HOST_PASSWORD
+
+smtp_server = settings.EMAIL_HOST
+smtp_port = settings.EMAIL_PORT
 
 
 def send_confirmation_email(company_name, applicant, to_email, role, manager_name, signed_offer_path=None, html_template_path=None):

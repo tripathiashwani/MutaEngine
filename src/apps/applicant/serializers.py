@@ -1,9 +1,9 @@
 from rest_framework import serializers
-from ..tasks import send_assignment_email  
+from .tasks import send_assignment_email  
 import os
 from django.core.files.storage import default_storage
 from django.conf import settings
-from ..models.applicant import JobApplicant, JobApplicantExtraField, AssignmentSubmission
+from .models import JobApplicant, JobApplicantExtraField, AssignmentSubmission
 
 from company.models import Company
 
@@ -39,7 +39,7 @@ class JobApplicantSerializer(serializers.ModelSerializer):
         applicant_name = f"{job_applicant.first_name} {job_applicant.last_name}"
         to_email = job_applicant.email
         role = job_applicant.job_template.title  
-        last_date = job_applicant.job_template.last_date 
+        last_date = job_applicant.job_template.deadline 
         assignment_detail_link = request.data.get('assignment_detail_link')
         application_id = job_applicant.id
         resume_path = None  
@@ -72,4 +72,24 @@ class AssignmentSubmissionsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AssignmentSubmission
-        exclude = ["is_deleted"]
+        exclude = ["is_deleted",]
+
+    def create(self, validated_data):
+        appicant_id = validated_data.get('applicant_id')
+        try:
+            applicant = JobApplicant.objects.get(id=appicant_id)
+        except JobApplicant.DoesNotExist:
+            raise serializers.ValidationError("Job applicant not found")
+
+        assignment_submitted = AssignmentSubmission.objects.create(**validated_data)
+
+        applicant.assignment_submitted = True
+        applicant.save()
+
+        return assignment_submitted
+
+class OfferletterSubmission(serializers.ModelSerializer):
+
+    class Meta:
+        model = JobApplicant
+        fields = ['id', 'signed_offer_letter']

@@ -1,5 +1,5 @@
 from celery import shared_task
-from ..mailers.assignment_mailer import send_assignment  # import the mailer function
+from src.apps.mail.mailers.assignment_mailer import send_assignment  # import the mailer function
 from django.utils import timezone
 import os
 

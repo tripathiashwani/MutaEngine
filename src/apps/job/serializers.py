@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from ..models.job import (
+from .models import (
     JobTemplate, 
     JobApplicantTemplate, 
     JobAssignmentTemplate, 
