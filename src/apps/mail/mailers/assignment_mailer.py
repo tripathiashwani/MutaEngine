@@ -4,19 +4,24 @@ from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
 from email.utils import formataddr
+from src import settings
 import os
 
 from django.http import JsonResponse
-# from ..career import private
-company_email = "tashwani475"
-company_password = "snabaglflmfwpmje"
 
-smtp_server = 'smtp.gmail.com'
-smtp_port = 587
+
+company_email = settings.EMAIL_HOST_USER
+company_password = settings.EMAIL_HOST_PASSWORD
+
+
+
+smtp_server = settings.EMAIL_HOST
+smtp_port = settings.EMAIL_PORT
 
 def send_assignment(company_name, applicant, to_email, role, last_date, assignment_detail_link, application_id, start_date=None, salary=None, location=None, manager_name=None, resume_path=None, html_template_path=None):
     subject = f"Assignment for {role} at {company_name}"
-
+    print("at send_assignment")
+    print(resume_path,"resume_path at send_assignment")
     # Default body if no HTML file is provided
     default_body = f"""
         Dear {applicant},<br><br>
@@ -65,7 +70,7 @@ def send_assignment(company_name, applicant, to_email, role, last_date, assignme
 
     # Set up the email message
     msg = MIMEMultipart()
-    msg['From'] = formataddr((company_name, company_email))
+    msg['From'] = formataddr((company_name, company_email)) # type: ignore
     msg['To'] = to_email
     msg['Subject'] = subject
 
@@ -85,11 +90,11 @@ def send_assignment(company_name, applicant, to_email, role, last_date, assignme
 
     # Send the email
     try:
-        server = smtplib.SMTP(smtp_server, smtp_port)
+        server = smtplib.SMTP(smtp_server, smtp_port) # type: ignore
         server.starttls()
-        server.login(company_email, company_password)
+        server.login(company_email, company_password) # type: ignore
         text = msg.as_string()
-        server.sendmail(company_email, to_email, text)
+        server.sendmail(company_email, to_email, text) # type: ignore
         server.quit()
         print(f"Assignment sent to {applicant} at {to_email}")
         return JsonResponse({'message': 'success'}, status=200)

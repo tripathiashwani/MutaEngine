@@ -4,18 +4,16 @@ from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
 from email.utils import formataddr
+from src import settings
 import os
-
 
 from django.http import JsonResponse
 
-from ..career import private
-company_email = private.company_email
-company_password = private.company_password   
+company_email = settings.EMAIL_HOST_USER
+company_password = settings.EMAIL_HOST_PASSWORD
 
-
-smtp_server = 'smtp.gmail.com'
-smtp_port = 587
+smtp_server = settings.EMAIL_HOST
+smtp_port = settings.EMAIL_PORT
 
 
 def send_offer_letter(company_name, applicant, to_email, role, offer_details, manager_name, offer_letter_path=None, html_template_path=None):

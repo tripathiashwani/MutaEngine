@@ -2,20 +2,20 @@ from rest_framework import generics, exceptions
 from rest_framework.viewsets import ModelViewSet
 
 
-from ..models.job import (
+from .models import (
     JobTemplate, 
     JobApplicantTemplate, 
     JobAssignmentTemplate, 
     OfferTemplate
 )
-from ..serializers.job_serializers import (
+from .serializers import (
     OfferLetterTemplateSerializer,
     JobAssignmentTemplateSerializer,
     JobApplicantTemplateSerializer,
     JobTemplateWriteSerializer,
     JobTemplateReadSerializer,
 )
-from ..filters import (
+from .filters import (
     OfferLetterFilterSet,
     JobAssignmentTemplateFilterSet,
     JobApplicantTemplateFilterSet,
@@ -51,6 +51,7 @@ class JobApplicantTemplateViewSet(ModelViewSet):
     queryset = JobApplicantTemplate.objects.all()
     serializer_class = JobApplicantTemplateSerializer
     filterset_class = JobApplicantTemplateFilterSet
+    print("JobApplicantTemplateViewSet job created")
 
     def get_object(self):
         pk = self.kwargs.get('pk', None)
@@ -63,6 +64,7 @@ class JobApplicantTemplateViewSet(ModelViewSet):
 class JobTemplateCreateView(generics.CreateAPIView):
     permission_classes = []
     authentication_classes = []
+    print("JobTemplateCreateView job created")
     serializer_class = JobTemplateWriteSerializer
 
 

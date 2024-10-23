@@ -2,7 +2,7 @@ import django_filters
 
 from src.apps.common.filters import BaseFilterSet
 
-from .models.job import (
+from .models import (
     JobTemplate, 
     JobApplicantTemplate, 
     JobAssignmentTemplate, 

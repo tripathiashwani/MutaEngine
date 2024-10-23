@@ -1,21 +1,28 @@
 from celery import shared_task
-from ..mailers.assignment_mailer import send_assignment
-from ..mailers.confirmation_mailer import send_confirmation_email
-from ..mailers.offer_letter_mailer import send_offer_letter
-from ..mailers.otp_mailer import send_otp_mail
-from ..mailers.password_credentials_mailer import password_credentials_mailer
-from ..mailers.welcome_mailer import send_welcome_email
-
+from src import settings
+from src.apps.mail.mailers.assignment_mailer import send_assignment 
+from src.apps.mail.mailers.confirmation_mailer import send_confirmation_email
+from src.apps.mail.mailers.otp_mailer import send_otp_mail
+from src.apps.mail.mailers.password_credentials_mailer import password_credentials_mailer
+from src.apps.mail.mailers.welcome_mailer import send_welcome_email
+from src.apps.mail.mailers.offer_letter_mailer import send_offer_letter
 from django.utils import timezone
 import os
 
 # send_assignment(company_name, applicant, to_email, role, last_date, assignment_detail_link, application_id, resume_path=None, html_template_path=None)
 @shared_task
 def send_assignment_email_task(
-    company_name, applicant, to_email, role, last_date, assignment_detail_link, application_id, resume_path=None, html_template_path=None
+    company_name, applicant, to_email, role, last_date, assignment_detail_link, application_id, resume_relative_path=None, html_template_relative_path=None
 ):
-    print("Sending assignment email 2")
-    # Pass the arguments to the email sending function
+    # Reconstruct full paths using MEDIA_ROOT
+    resume_path = os.path.join(settings.MEDIA_ROOT, resume_relative_path) if resume_relative_path else None
+    html_template_path = os.path.join(settings.MEDIA_ROOT, html_template_relative_path) if html_template_relative_path else None
+
+    # Debug logging
+    print(f"Full resume path: {resume_path}")
+    print(f"Full HTML template path: {html_template_path}")
+
+    
     send_assignment(
         company_name, 
         applicant, 
@@ -24,8 +31,8 @@ def send_assignment_email_task(
         last_date, 
         assignment_detail_link, 
         application_id, 
-        resume_path if resume_path else None,  # Ensure it's passed as None if not present
-        html_template_path if html_template_path else None  # Ensure it's passed as None if not present
+        resume_path=resume_path, 
+        html_template_path=html_template_path
     )
 
 

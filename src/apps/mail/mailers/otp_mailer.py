@@ -1,17 +1,20 @@
+import random
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from email.mime.base import MIMEBase
+from email import encoders
 from email.utils import formataddr
-import random
+from src import settings
+import os
 
+from django.http import JsonResponse
 
-from ..career import private
-company_email = private.company_email
-company_password = private.company_password   
+company_email = settings.EMAIL_HOST_USER
+company_password = settings.EMAIL_HOST_PASSWORD
 
-# Gmail SMTP server configuration
-smtp_server = 'smtp.gmail.com'
-smtp_port = 587
+smtp_server = settings.EMAIL_HOST
+smtp_port = settings.EMAIL_PORT
 
 # Function to generate OTP
 def generate_otp():

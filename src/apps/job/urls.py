@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views.job_views import (
+from .views import (
     OfferLetterTemplateViewSet,
     JobAssignmentTemplateViewSet,
     JobApplicantTemplateViewSet,
@@ -10,8 +10,6 @@ from .views.job_views import (
     JobTemplateRetrieveView,
     JobTemplateDeleteView,
 )
-
-from .views.applicant_views import JobApplicantViewSet, AssignmentSubmissionViewSet
 
 urlpatterns = [
     path(
@@ -44,21 +42,9 @@ urlpatterns = [
         JobApplicantTemplateViewSet.as_view({"get": "retrieve", "patch": "update", "put": "update", "delete": "destroy"}), 
         name="job-applicant-template-detail"
     ),
-    path("job/create/", JobTemplateCreateView.as_view(), name="job-template-create"),
-    path("job/<uuid:pk>/update/", JobTemplateUpdateView.as_view(), name="job-template-update"),
-    path("job/list/", JobTemplateListView.as_view(), name="job-template-list"),
-    path("job/<uuid:pk>/", JobTemplateRetrieveView.as_view(), name="job-template-retrieve"),
-    path("job/<uuid:pk>/delete/", JobTemplateDeleteView.as_view(), name="job-template-delete"),
-    path("applicant/",JobApplicantViewSet.as_view({"get": "list", "post": "create"}), name="applicant-view-set"),
-    path("applicant/<uuid:pk>/", JobApplicantViewSet.as_view({"get": "retrieve",}), name="applicant-detail-view-set"),
-    path(
-        "assignment/submission/", 
-        AssignmentSubmissionViewSet.as_view({"get": "list", "post": "create"}), 
-        name="assignment-submission-view-set"
-    ),
-    path(
-        "assignment/submission/<uuid:pk>/",
-        AssignmentSubmissionViewSet.as_view({"get": "retrieve",}), 
-        name="assignment-submission-detail-view-set"
-    ),
+    path("create/", JobTemplateCreateView.as_view(), name="job-template-create"),
+    path("<uuid:pk>/update/", JobTemplateUpdateView.as_view(), name="job-template-update"),
+    path("list/", JobTemplateListView.as_view(), name="job-template-list"),
+    path("<uuid:pk>/", JobTemplateRetrieveView.as_view(), name="job-template-retrieve"),
+    path("<uuid:pk>/delete/", JobTemplateDeleteView.as_view(), name="job-template-delete"),
 ]
