@@ -14,13 +14,9 @@ import os
 def send_assignment_email_task(
     company_name, applicant, to_email, role, last_date, assignment_detail_link, application_id, resume_relative_path=None, html_template_relative_path=None
 ):
-    # Reconstruct full paths using MEDIA_ROOT
+    
     resume_path = os.path.join(settings.MEDIA_ROOT, resume_relative_path) if resume_relative_path else None
     html_template_path = os.path.join(settings.MEDIA_ROOT, html_template_relative_path) if html_template_relative_path else None
-
-    # Debug logging
-    print(f"Full resume path: {resume_path}")
-    print(f"Full HTML template path: {html_template_path}")
 
     
     send_assignment(
@@ -35,15 +31,18 @@ def send_assignment_email_task(
         html_template_path=html_template_path
     )
 
+@shared_task
+def send_offer_letter_email_task(company_name, applicant, to_email, role, offer_details, manager_name=None, resume_relative_path=None, offer_letter_relative_path=None, html_template_relative_path=None):
+    offer_letter_path = os.path.join(settings.MEDIA_ROOT, offer_letter_relative_path) if offer_letter_relative_path else None
+    html_template_path = os.path.join(settings.MEDIA_ROOT, html_template_relative_path) if html_template_relative_path else None
+    resume_path=os.path.join(settings.MEDIA_ROOT, resume_relative_path) if resume_relative_path else None
+    send_offer_letter(company_name, applicant, to_email, role, offer_details, manager_name, resume_path=resume_path, offer_letter_path=offer_letter_path, html_template_path=html_template_path)
 
     
 @shared_task
 def send_confirmation_email_task(company_name, applicant, to_email, role, joining_date, manager, application_id, resume_path=None, html_template_path=None):
     send_confirmation_email(company_name, applicant, to_email, role, joining_date, manager, application_id, resume_path, html_template_path)
 
-@shared_task
-def send_offer_letter_task(company_name, applicant, to_email, role, offer_details, manager_name, offer_letter_path=None, html_template_path=None):
-    send_offer_letter(company_name, applicant, to_email, role,offer_details, manager_name, offer_letter_path, html_template_path)
 
 @shared_task
 def send_otp_mail_task(employee_name, to_email, otp, company_name):
