@@ -88,8 +88,16 @@ class AssignmentSubmissionsSerializer(serializers.ModelSerializer):
 
         return assignment_submitted
 
-class OfferletterSubmission(serializers.ModelSerializer):
+class OfferletterSubmissionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = JobApplicant
-        fields = ['id', 'signed_offer_letter']
+        fields = ['id', 'submitted_offer_letter']
+
+    def validate(self, attrs):
+        if not attrs.get('id'):
+            raise serializers.ValidationError('Job applicant ID is required')
+
+        if not attrs.get('submitted_offer_letter'):
+            raise serializers.ValidationError('Signed Offer letter is required')
+        return super().validate(attrs)

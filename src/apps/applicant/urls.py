@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import JobApplicantViewSet, AssignmentSubmissionViewSet
+from .views import JobApplicantViewSet, AssignmentSubmissionViewSet, SubmitSignedOfferLetterView
 
 
 urlpatterns = [
@@ -15,5 +15,10 @@ urlpatterns = [
         "assignment/submission/<uuid:pk>/",
         AssignmentSubmissionViewSet.as_view({"get": "retrieve",}), 
         name="assignment-submission-detail-view-set"
+    ),
+    path(
+        "submit/signed/offer/letter/",
+        SubmitSignedOfferLetterView.as_view(),
+        name="submit-signed-offer-letter-view"
     ),
 ]
