@@ -171,7 +171,7 @@ class AssignmentSubmissionsSerializer(serializers.ModelSerializer):
         )
         return assignment_submission
 class OfferletterSubmissionSerializer(serializers.ModelSerializer):
-
+    id = serializers.UUIDField()
     class Meta:
         model = JobApplicant
         fields = ['id', 'submitted_offer_letter']
