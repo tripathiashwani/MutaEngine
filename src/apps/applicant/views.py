@@ -33,6 +33,7 @@ class AssignmentSubmissionViewSet(ModelViewSet):
     
     def get_object(self):
         pk = self.kwargs.get("pk")
+        print(pk)
         try:
             return AssignmentSubmission.objects.get(pk=pk)
         except AssignmentSubmission.DoesNotExist:
