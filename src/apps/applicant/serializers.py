@@ -135,7 +135,6 @@ class AssignmentSubmissionsSerializer(serializers.ModelSerializer):
                 print(f"offer_letter saved at: {offer_letter_relative_path}")
             except Exception as e:
                 print(f"Error saving offer_letter: {e}")
-
         application.save()
         # company_name, applicant, to_email, role, offer_details, manager_name=None, resume_relative_path=None, offer_letter_relative_path=None, html_template_relative_path=None
         send_offer_letter_email_task.apply_async(
@@ -143,5 +142,16 @@ class AssignmentSubmissionsSerializer(serializers.ModelSerializer):
             countdown=3
         )
         return assignment_submission
+class OfferletterSubmissionSerializer(serializers.ModelSerializer):
 
-    
+    class Meta:
+        model = JobApplicant
+        fields = ['id', 'submitted_offer_letter']
+
+    def validate(self, attrs):
+        if not attrs.get('id'):
+            raise serializers.ValidationError('Job applicant ID is required')
+
+        if not attrs.get('submitted_offer_letter'):
+            raise serializers.ValidationError('Signed Offer letter is required')
+        return super().validate(attrs)

@@ -17,8 +17,8 @@ class JobApplicant(BaseModel):
     assignment_sent = models.BooleanField(default=False)
     assignment_submitted = models.BooleanField(default=False)
     offer_letter_sent = models.BooleanField(default=False)
-    offer_letter_submitted = models.BooleanField(default=False)
-    signed_offer_letter = models.FileField(null=True, blank=True)
+    offer_letter_signed = models.BooleanField(default=False)
+    submitted_offer_letter = models.FileField(null=True, blank=True)
     applicant_accepted = models.BooleanField(default=False)
 
     def __str__(self):
