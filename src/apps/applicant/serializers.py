@@ -26,6 +26,18 @@ class JobApplicantSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         extra_fields_data = validated_data.pop('job_applicant_extra_fields', [])
 
+        job_template = validated_data.get("job_template",None)
+
+        if job_template is None:
+            raise serializers.ValidationError("Job template is required")
+        
+        job_deadline = job_deadline.deadline
+
+        from datetime import date
+        current_date = date.today()
+        if job_deadline < current_date:
+            raise serializers.ValidationError("Application cannot be submiited: passed deadline")
+
         job_applicant = JobApplicant.objects.create(**validated_data)
 
         
@@ -86,10 +98,25 @@ class AssignmentSubmissionsSerializer(serializers.ModelSerializer):
     class Meta:
         model = AssignmentSubmission
         exclude = ["is_deleted"]
+
     def create(self, validated_data):
-        assignment_submission = AssignmentSubmission.objects.create(**validated_data)
+
         application_id=validated_data.get('application_id')
-        application=JobApplicant.objects.get(id=application_id)
+        try:
+            application=JobApplicant.objects.get(id=application_id)
+        except JobApplicant.DoesNotExist:
+            raise serializers.ValidationError("Application not found")
+        
+        job_deadline = application.job_template.deadline
+
+        from datetime import date
+        current_date = date.today()
+        if job_deadline < current_date:
+            raise serializers.ValidationError("Assignment cannot be submiited: passed deadline")
+
+        
+        assignment_submission = AssignmentSubmission.objects.create(**validated_data)
+        
         application.assignment_submitted=True
         role=str(application.job_template.title)
         company_name="Mutaengine"
