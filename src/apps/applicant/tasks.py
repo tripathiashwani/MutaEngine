@@ -40,8 +40,10 @@ def send_offer_letter_email_task(company_name, applicant, to_email, role, offer_
 
     
 @shared_task
-def send_confirmation_email_task(company_name, applicant, to_email, role, joining_date, manager, application_id, resume_path=None, html_template_path=None):
-    send_confirmation_email(company_name, applicant, to_email, role, joining_date, manager, application_id, resume_path, html_template_path)
+def send_confirmation_email_task(company_name, applicant, to_email, role, joining_date, manager_name=None, resume_relative_path=None, html_template_relative__path=None):
+    resume_path = os.path.join(settings.MEDIA_ROOT, resume_relative_path) if resume_relative_path else None
+    html_template_path = os.path.join(settings.MEDIA_ROOT, html_template_relative__path) if html_template_relative__path else None
+    send_confirmation_email(company_name, applicant, to_email, role, joining_date, manager_name, resume_path=resume_path, html_template_path=html_template_path)
 
 
 @shared_task

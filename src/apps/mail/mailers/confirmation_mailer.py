@@ -16,7 +16,7 @@ smtp_server = settings.EMAIL_HOST
 smtp_port = settings.EMAIL_PORT
 
 
-def send_confirmation_email(company_name, applicant, to_email, role, manager_name, signed_offer_path=None, html_template_path=None):
+def send_confirmation_email(company_name, applicant, to_email, role, joining_date, manager_name=None, resume_path=None, html_template_path=None,signed_offer_path=None):
     subject = f"Offer Acceptance Confirmation for {role} at {company_name}"
 
     # If an HTML template is provided, use that; otherwise use the default body
@@ -48,6 +48,8 @@ def send_confirmation_email(company_name, applicant, to_email, role, manager_nam
                     '{{applicant}}': applicant,
                     '{{role}}': role,
                     '{{company_name}}': company_name,
+                    '{{manager_name}}': manager_name,
+                    '{{joining_date}}':joining_date
                 }
 
                 
