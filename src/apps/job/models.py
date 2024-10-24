@@ -79,6 +79,7 @@ class JobTemplate(BaseModel,UserModelMixin):
         choices=WorkType.choices,
         default=WorkType.FULL_TIME
     )
+    position = models.CharField(max_length=255)
     department = models.CharField(max_length=255)
     description = CKEditor5Field('description', config_name='extends')
     deadline = models.DateField()

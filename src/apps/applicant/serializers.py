@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .tasks import send_assignment_email  
+from .tasks import send_assignment_email_task , send_offer_letter_email_task
 import os
 from django.core.files.storage import default_storage
 from django.conf import settings
@@ -35,36 +35,49 @@ class JobApplicantSerializer(serializers.ModelSerializer):
 
         
         request = self.context['request']
-        company_name = Company.name
+        # company_name = Company.objects.all().first().name
+        company_name="Mutaengine"
         applicant_name = f"{job_applicant.first_name} {job_applicant.last_name}"
         to_email = job_applicant.email
-        role = job_applicant.job_template.title  
+        role = str(job_applicant.job_template.title ) 
         last_date = job_applicant.job_template.deadline 
         assignment_detail_link = request.data.get('assignment_detail_link')
-        application_id = job_applicant.id
-        resume_path = None  
+        application_id = str(job_applicant.id)
+         # Initialize paths
+        html_template_relative_path = None
+        resume_relative_path = None
 
-        html_template_path = None
-        
+        # Save uploaded HTML template file
         html_file = request.FILES.get('html_template')
-        resume_file=request.FILES.get('resume')
-
+        print(request.FILES)
         if html_file:
-           
-            html_file_path = os.path.join(settings.MEDIA_ROOT, 'templates', html_file.name)
-            path = default_storage.save(html_file_path, html_file)
-            html_template_path = os.path.join(settings.MEDIA_ROOT, path)
-        
+            try:
+                html_file_path = os.path.join('templates', html_file.name)
+                path = default_storage.save(html_file_path, html_file)
+                html_template_relative_path = path
+                print(f"HTML template saved at: {html_template_relative_path}")
+            except Exception as e:
+                print(f"Error saving HTML template: {e}")
+
+
+        # Save uploaded resume file
+        resume_file = request.FILES.get('resume')
         if resume_file:
-            
-            resume_file_path = os.path.join(settings.MEDIA_ROOT, 'resumes', resume_file.name)
-            path = default_storage.save(resume_file_path, resume_file)
-            resume_path = os.path.join(settings.MEDIA_ROOT, path)
+            try:
+                resume_file_path = os.path.join('resumes', resume_file.name)
+                path = default_storage.save(resume_file_path, resume_file)
+                resume_relative_path = path
+                print(f"Resume saved at: {resume_relative_path}")
+            except Exception as e:
+                print(f"Error saving resume: {e}")
 
-       
-        send_assignment_email.apply_async((company_name, applicant_name, to_email, role, last_date, assignment_detail_link, application_id, resume_path, html_template_path), countdown=12*3600)
-
-
+        # Pass relative paths to the Celery task
+        send_assignment_email_task.apply_async(
+            (str(company_name), applicant_name, to_email, role, last_date, assignment_detail_link, application_id, resume_relative_path, html_template_relative_path),
+            countdown=3
+        )
+        job_applicant.assignment_sent=True
+        job_applicant.save()
         return job_applicant
 
 
@@ -72,22 +85,63 @@ class AssignmentSubmissionsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AssignmentSubmission
-        exclude = ["is_deleted",]
-
+        exclude = ["is_deleted"]
     def create(self, validated_data):
-        appicant_id = validated_data.get('applicant_id')
-        try:
-            applicant = JobApplicant.objects.get(id=appicant_id)
-        except JobApplicant.DoesNotExist:
-            raise serializers.ValidationError("Job applicant not found")
+        assignment_submission = AssignmentSubmission.objects.create(**validated_data)
+        application_id=validated_data.get('application_id')
+        application=JobApplicant.objects.get(id=application_id)
+        application.assignment_submitted=True
+        role=str(application.job_template.title)
+        company_name="Mutaengine"
+        applicant_name = f"{application.first_name} {application.last_name}"
+        to_email = str(application.email)
+        html_template_relative_path = None
+        resume_relative_path = None
+        offer_letter_relative_path = None
+        request = self.context['request']
+        offer_details = request.data.get('offer_details')
+        manager_name = request.data.get('manager_name')
 
-        assignment_submitted = AssignmentSubmission.objects.create(**validated_data)
+        # Save uploaded HTML template file
+        html_file = request.FILES.get('html_template')
+        print(request.FILES)
+        if html_file:
+            try:
+                html_file_path = os.path.join('templates', html_file.name)
+                path = default_storage.save(html_file_path, html_file)
+                html_template_relative_path = path
+                print(f"HTML template saved at: {html_template_relative_path}")
+            except Exception as e:
+                print(f"Error saving HTML template: {e}")
 
-        applicant.assignment_submitted = True
-        applicant.save()
 
-        return assignment_submitted
-
+        # Save uploaded resume file
+        resume_file = request.FILES.get('resume')
+        if resume_file:
+            try:
+                resume_file_path = os.path.join('resumes', resume_file.name)
+                path = default_storage.save(resume_file_path, resume_file)
+                resume_relative_path = path
+                print(f"Resume saved at: {resume_relative_path}")
+            except Exception as e:
+                print(f"Error saving resume: {e}")
+                
+        offer_letter_file = request.FILES.get('offer_letter')
+        if offer_letter_file:
+            try:
+                offer_letter_file_path = os.path.join('offer_letters', offer_letter_file.name)
+                path = default_storage.save(offer_letter_file_path,offer_letter_file)
+                offer_letter_relative_path = path
+                print(f"offer_letter saved at: {offer_letter_relative_path}")
+            except Exception as e:
+                print(f"Error saving offer_letter: {e}")
+        application.save()
+        # company_name, applicant, to_email, role, offer_details, manager_name=None, resume_relative_path=None, offer_letter_relative_path=None, html_template_relative_path=None
+        send_offer_letter_email_task.apply_async(
+            (str(company_name), applicant_name, to_email, role,offer_details,manager_name, resume_relative_path, offer_letter_relative_path,html_template_relative_path),
+            countdown=3
+        )
+        return assignment_submission
 class OfferletterSubmissionSerializer(serializers.ModelSerializer):
 
     class Meta:

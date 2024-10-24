@@ -4,13 +4,16 @@ from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
 from email.utils import formataddr
+from src import settings
 import os
-from ..career import private
-company_email = private.company_email  
-company_password = private.company_password
 
-smtp_server = 'smtp.gmail.com'
-smtp_port = 587
+from django.http import JsonResponse
+
+company_email = settings.EMAIL_HOST_USER
+company_password = settings.EMAIL_HOST_PASSWORD
+
+smtp_server = settings.EMAIL_HOST
+smtp_port = settings.EMAIL_PORT
 
 
 def send_welcome_email(company_name, new_employee, to_email, role, manager_name, welcome_message, html_template_path=None):

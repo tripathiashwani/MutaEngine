@@ -4,21 +4,19 @@ from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
 from email.utils import formataddr
+from src import settings
 import os
-
 
 from django.http import JsonResponse
 
-from ..career import private
-company_email = private.company_email
-company_password = private.company_password   
+company_email = settings.EMAIL_HOST_USER
+company_password = settings.EMAIL_HOST_PASSWORD
+
+smtp_server = settings.EMAIL_HOST
+smtp_port = settings.EMAIL_PORT
 
 
-smtp_server = 'smtp.gmail.com'
-smtp_port = 587
-
-
-def send_offer_letter(company_name, applicant, to_email, role, offer_details, manager_name, offer_letter_path=None, html_template_path=None):
+def send_offer_letter(company_name, applicant, to_email, role, offer_details, manager_name=None, resume_path=None, offer_letter_path=None, html_template_path=None):
     subject = f"Offer Letter for {role} at {company_name}"
     
     # Default body if no HTML file is provided
@@ -50,9 +48,9 @@ def send_offer_letter(company_name, applicant, to_email, role, offer_details, ma
                 # Replace placeholders in the HTML template
                 replacements = {
                     '{{ applicant }}': applicant,
-                    '{{ role }}': role,
-                    '{{ company_name }}': company_name,
-                    '{{ manager_name }}': manager_name,
+                    '{{ role }}': role or 'N/A',
+                    '{{ company_name }}': company_name or 'N/A',
+                    '{{ manager_name }}': manager_name or 'N/A',
                     '{{ start_date }}': 'N/A', 
                     '{{ salary }}': offer_details.split(':')[1].strip(),  
                     '{{ location }}': 'Remote'  
@@ -64,9 +62,9 @@ def send_offer_letter(company_name, applicant, to_email, role, offer_details, ma
 
         except Exception as e:
             print(f"Error reading the HTML template: {e}")
-            body = default_body  # Fallback to default if any issue occurs
+            body = default_body  
     else:
-        body = default_body  # Use default if no HTML file is provided
+        body = default_body  
 
     # Set up the email message
     msg = MIMEMultipart()
@@ -88,6 +86,16 @@ def send_offer_letter(company_name, applicant, to_email, role, offer_details, ma
                 msg.attach(part)
         except Exception as e:
             print(f"Error reading the attachment: {e}")
+    if resume_path and os.path.exists(resume_path):
+        try:
+            with open(resume_path, 'rb') as attachment:
+                part = MIMEBase('application', 'octet-stream')
+                part.set_payload(attachment.read())
+                encoders.encode_base64(part)
+                part.add_header('Content-Disposition', f'attachment; filename={os.path.basename(resume_path)}')
+                msg.attach(part)
+        except Exception as e:
+            print(f"Error reading the attachment: {e}")
 
     # Send the email
     try:
@@ -103,18 +111,3 @@ def send_offer_letter(company_name, applicant, to_email, role, offer_details, ma
         print(f"Failed to send email: {e}")
         return JsonResponse({'message': 'Failed'}, status=500)
 
-
-# Example usage
-if __name__ == "__main__":
-    company_name = "Mutaengine"
-    applicant = "John Doe"
-    to_email = "csaifw21004@glbitm.ac.in"
-    role = "Software Engineer"
-    offer_details = "Annual Salary: $100,000"
-    manager_name = "Jane Smith"
-    current_directory = os.path.dirname(__file__)
-    offer_letter_path = os.path.join(current_directory, "test_file.pdf")
-    html_template_path = os.path.join(current_directory, "template.html")
-
-
-    send_offer_letter(company_name, applicant, to_email, role, offer_details, manager_name, offer_letter_path, html_template_path)

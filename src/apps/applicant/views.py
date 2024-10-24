@@ -12,7 +12,7 @@ class JobApplicantViewSet(ModelViewSet):
 
     def get_queryset(self):
         return JobApplicant.objects.filter(is_deleted=False)
-
+    
     def get_object(self):
         pk = self.kwargs.get("pk")
         try:

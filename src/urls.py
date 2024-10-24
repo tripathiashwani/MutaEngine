@@ -32,6 +32,7 @@ urlpatterns = [
                             path("company/", include("src.apps.company.urls")),
                             path("job/", include("src.apps.job.urls")),
                             path("applicant/",include("src.apps.applicant.urls")),
+                            path("auth/", include("src.apps.auth.urls")),
                         ]
                     ),
                 )

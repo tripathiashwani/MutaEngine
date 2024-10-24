@@ -8,12 +8,6 @@ from email.utils import formataddr
 from src import settings
 
 from django.http import JsonResponse
-# from ..career import private
-# company_email = private.company_email
-# company_password = private.company_password
-
-# smtp_server = 'smtp.gmail.com'
-# smtp_port = 587
 
 company_email = settings.EMAIL_HOST_USER
 company_password = settings.EMAIL_HOST_PASSWORD
@@ -62,9 +56,9 @@ def send_confirmation_email(company_name, applicant, to_email, role, manager_nam
 
         except Exception as e:
             print(f"Error reading the HTML template: {e}")
-            body = default_body  # Fallback to default if any issue occurs
+            body = default_body  
     else:
-        body = default_body  # Use default if no HTML file is provided
+        body = default_body 
 
     # Create the email message
     msg = MIMEMultipart()
