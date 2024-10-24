@@ -31,7 +31,7 @@ class JobApplicantSerializer(serializers.ModelSerializer):
         if job_template is None:
             raise serializers.ValidationError("Job template is required")
         
-        job_deadline = job_deadline.deadline
+        job_deadline = job_template.deadline
 
         from datetime import date
         current_date = date.today()
