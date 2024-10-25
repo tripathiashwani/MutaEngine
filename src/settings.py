@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "src.apps.company",
     "src.apps.job",
     "src.apps.applicant",
+    'django_redis',
 ]
 
 MIDDLEWARE = [
@@ -49,6 +50,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     "corsheaders.middleware.CorsMiddleware",
+    'src.apps.common.middlewares.DynamicThrottlingMiddleware',
 ]
 
 ROOT_URLCONF = 'src.urls'
@@ -260,6 +262,18 @@ CELERY_RESULT_BACKEND = config("CELERY_BACKEND_URL", default="redis://localhost:
 
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/1',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            'IGNORE_EXCEPTIONS': True,
+        },
+        'TIMEOUT': 300,
+    }
+}
 
 APPEND_SLASH = True
 
