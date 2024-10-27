@@ -8,6 +8,8 @@ from .models import JobApplicant, AssignmentSubmission
 from src.apps.company.models import Company
 from .tasks import send_confirmation_email_task
 from django.core.files.storage import default_storage
+from rest_framework.response import Response
+from rest_framework import status
 
 class JobApplicantViewSet(ModelViewSet):
     permission_classes = []
@@ -33,6 +35,7 @@ class AssignmentSubmissionViewSet(ModelViewSet):
     
     def get_object(self):
         pk = self.kwargs.get("pk")
+        print(pk)
         try:
             return AssignmentSubmission.objects.get(pk=pk)
         except AssignmentSubmission.DoesNotExist:
@@ -67,13 +70,16 @@ class SubmitSignedOfferLetterView(generics.GenericAPIView):
 
 
 def handle_mailer_task(request, applicant):
-    company_name=str(Company.objects.all().first().name)
+    company_name="Mutaengine"
     applicant_name = f"{applicant.first_name} {applicant.last_name}"
     to_email = str(applicant.email)
     role = str(applicant.job_template.title)
-    manager_name = str(applicant.manager_name)
+    manager_name = str(applicant.manager.first_name)
     joining_date = str(applicant.joining_date)
     html_file = request.FILES.get('html_template')
+    html_template_relative_path = None
+    resume_relative_path = None
+    offer_letter_relative_path = None
     print(request.FILES)
     if html_file:
         try:
@@ -86,19 +92,17 @@ def handle_mailer_task(request, applicant):
 
 
         # Save uploaded resume file
-        html_template_relative_path = None
-        resume_relative_path = None
-        offer_letter_relative_path = None
         
-        resume_file = request.FILES.get('resume')
-        if resume_file:
-            try:
-                resume_file_path = os.path.join('resumes', resume_file.name)
-                path = default_storage.save(resume_file_path, resume_file)
-                resume_relative_path = path
-                print(f"Resume saved at: {resume_relative_path}")
-            except Exception as e:
-                print(f"Error saving resume: {e}")
+        
+    resume_file = request.FILES.get('resume')
+    if resume_file:
+        try:
+            resume_file_path = os.path.join('resumes', resume_file.name)
+            path = default_storage.save(resume_file_path, resume_file)
+            resume_relative_path = path
+            print(f"Resume saved at: {resume_relative_path}")
+        except Exception as e:
+            print(f"Error saving resume: {e}")
                 
         
     send_confirmation_email_task.apply_async(
@@ -109,11 +113,7 @@ def handle_mailer_task(request, applicant):
     return True
 
     # Dummy request and applicant data for testing handle_mailer_task
-    class DummyRequest:
-        FILES = {
-            'html_template': open('dummy_template.html', 'rb'),
-            'resume': open('dummy_resume.pdf', 'rb')
-        }
+    
 
     
   

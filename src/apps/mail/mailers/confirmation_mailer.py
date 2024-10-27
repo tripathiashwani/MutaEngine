@@ -45,11 +45,11 @@ def send_confirmation_email(company_name, applicant, to_email, role, joining_dat
 
                 # Replace placeholders in the HTML template
                 replacements = {
-                    '{{applicant}}': applicant,
-                    '{{role}}': role,
-                    '{{company_name}}': company_name,
-                    '{{manager_name}}': manager_name,
-                    '{{joining_date}}':joining_date
+                    '{{ applicant }}': applicant or 'Applicant',
+                    '{{ role }}': role or 'backend developer',
+                    '{{ company_name }}': company_name or 'Mutaengine',
+                    '{{ manager_name }}': manager_name or 'Manager',
+                    '{{ start_date }}':joining_date or '2022-01-01',
                 }
 
                 
