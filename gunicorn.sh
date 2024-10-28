@@ -1,6 +1,6 @@
 echo "at gunicorn.sh"
 cd /var/lib/jenkins/workspace/career_backend
-source venv/bin/activate
+. venv/bin/activate
 
 
 echo "$PWD"

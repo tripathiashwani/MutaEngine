@@ -25,5 +25,5 @@ else
 fi
 
 
-sudo chmod -R 777 logs
+ chmod -R 777 logs
 echo "env setup finishes"
