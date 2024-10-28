@@ -9,4 +9,6 @@ python3 manage.py makemigrations
 python3 manage.py migrate
 # python3 manage.py collectstatic -- no-input
 
-python3 manage.py runserver
+# python3 manage.py runserver
+
+gunicorn --workers 3 --bind 0.0.0.0:8000 src.wsgi:application
