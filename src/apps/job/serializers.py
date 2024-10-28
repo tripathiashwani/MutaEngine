@@ -48,6 +48,7 @@ class JobApplicantTemplateSerializer(serializers.ModelSerializer):
 
 
 class JobTemplateWriteSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
         model = JobTemplate
@@ -65,18 +66,18 @@ class JobTemplateReadSerializer(serializers.ModelSerializer):
     
     def get_job_applicant_template(self, obj):
         if obj.job_applicant_template:
-            return JobApplicantTemplateSerializer(obj.job_applicant_template, fields=["id","title"]).data
+            return JobApplicantTemplateSerializer(obj.job_applicant_template).data
         else:
             return None
         
     def get_job_assignment_template(self, obj):
         if obj.job_assignment_template:
-            return JobAssignmentTemplateSerializer(obj.job_assignment_template, fields=["id","title"]).data
+            return JobAssignmentTemplateSerializer(obj.job_assignment_template).data
         else:
             return None
         
     def get_offer_template(self, obj):
         if obj.offer_template:
-            return OfferLetterTemplateSerializer(obj.offer_template, fields=["id","title"]).data
+            return OfferLetterTemplateSerializer(obj.offer_template).data
         else:
             return None
