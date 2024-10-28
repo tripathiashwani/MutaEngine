@@ -235,7 +235,8 @@ CORS_ALLOWED_ORIGINS = [
     "https://*",
     "http://*",
     "https://5adc-98-70-14-12.ngrok-free.app",
-    "http://career.mutaengine.cloud"
+    "http://career.mutaengine.cloud",
+    "http://98.70.14.12/"
 ]
 
 CSRF_TRUSTED_ORIGINS = [
