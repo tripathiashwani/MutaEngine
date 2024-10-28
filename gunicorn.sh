@@ -1,14 +1,36 @@
+#!/bin/bash
 echo "at gunicorn.sh"
+source venv/bin/activate
+
 cd /var/lib/jenkins/workspace/career_backend
-. venv/bin/activate
-
-
 echo "$PWD"
 echo "Migrations started" 
 python3 manage.py makemigrations
 python3 manage.py migrate
-# python3 manage.py collectstatic -- no-input
+python3 manage.py collectstatic -- no-input
 
-# python3 manage.py runserver
 
-gunicorn --workers 3 --bind 0.0.0.0:8000 src.wsgi:application
+echo "Migrations done"
+
+cd /var/lib/jenkins/workspace/career_backend
+
+sudo cp -rf gunicorn.socket /etc/systemd/system/
+sudo cp -rf gunicorn.service /etc/systemd/system/
+
+echo "$USER"
+echo "$PWD"
+
+
+sudo systemctl daemon-reload
+sudo systemctl start gunicorn
+
+echo "Gunicorn has started."
+
+sudo systemctl enable gunicorn
+
+echo "Gunicorn has been enabled."
+
+sudo systemctl restart gunicorn
+
+
+sudo systemctl status gunicorn
