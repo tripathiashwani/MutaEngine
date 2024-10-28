@@ -1,7 +1,8 @@
 echo "at gunicorn.sh"
-source env/bin/activate
-
 cd /var/lib/jenkins/workspace/career_backend
+source venv/bin/activate
+
+
 echo "$PWD"
 echo "Migrations started" 
 python3 manage.py makemigrations
