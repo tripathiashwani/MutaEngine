@@ -9,6 +9,8 @@ else
     python3 -m venv venv
 fi
 
+echo $PWD
+
 source venv/bin/activate
 
 
