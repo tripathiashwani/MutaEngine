@@ -33,8 +33,8 @@ class JobApplicantSerializer(serializers.ModelSerializer):
         
         job_deadline = job_template.deadline
 
-        from datetime import date
-        current_date = date.today()
+        from datetime import datetime
+        current_date = datetime.now()
         if job_deadline < current_date:
             raise serializers.ValidationError("Application cannot be submiited: passed deadline")
 
@@ -110,8 +110,9 @@ class AssignmentSubmissionsSerializer(serializers.ModelSerializer):
         
         job_deadline = application.job_template.deadline
 
-        from datetime import date
-        current_date = date.today()
+        from datetime import datetime
+        current_date = datetime.now()
+
         if job_deadline < current_date:
             raise serializers.ValidationError("Assignment cannot be submiited: passed deadline")
 
