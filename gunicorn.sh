@@ -5,8 +5,8 @@ source venv/bin/activate
 
 echo "$PWD"
 echo "Migrations started" 
-python3 manage.py makemigrations
-python3 manage.py migrate
-python3 manage.py collectstatic -- no-input
+python manage.py makemigrations
+python manage.py migrate
+python manage.py collectstatic -- no-input
 
-python3 manage.py runserver
+python manage.py runserver
