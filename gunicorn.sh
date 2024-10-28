@@ -1,36 +1,34 @@
 #!/bin/bash
-echo "at gunicorn.sh"
+
+echo "Starting gunicorn.sh script"
+cd /var/lib/jenkins/workspace/career_backend
 source venv/bin/activate
 
-cd /var/lib/jenkins/workspace/career_backend
-echo "$PWD"
-echo "Migrations started" 
+echo "Current Directory: $PWD"
+echo "Starting migrations..." 
 python3 manage.py makemigrations
 python3 manage.py migrate
-python3 manage.py collectstatic -- no-input
+python3 manage.py collectstatic --no-input
+echo "Migrations and static files collection done."
 
-
-echo "Migrations done"
-
-cd /var/lib/jenkins/workspace/career_backend
-
+# Copy Gunicorn service and socket files to systemd
 sudo cp -rf gunicorn.socket /etc/systemd/system/
 sudo cp -rf gunicorn.service /etc/systemd/system/
 
-echo "$USER"
-echo "$PWD"
-
-
+# Reload systemd to recognize new services
 sudo systemctl daemon-reload
-sudo systemctl start gunicorn
 
-echo "Gunicorn has started."
+# Start Gunicorn socket
+sudo systemctl start gunicorn.socket
+echo "Gunicorn socket started."
 
+# Enable and start Gunicorn service
 sudo systemctl enable gunicorn
+sudo systemctl start gunicorn
+echo "Gunicorn service started and enabled."
 
-echo "Gunicorn has been enabled."
-
+# Restart Gunicorn service to ensure changes are applied
 sudo systemctl restart gunicorn
 
-
+# Confirm Gunicorn status
 sudo systemctl status gunicorn
