@@ -234,8 +234,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:8000",
     "https://*",
     "http://*",
-    "https://5adc-98-70-14-12.ngrok-free.app/",
-    "http://career.mutaengine.cloud/"
+    "https://5adc-98-70-14-12.ngrok-free.app",
+    "http://career.mutaengine.cloud"
 ]
 
 CSRF_TRUSTED_ORIGINS = [
@@ -243,8 +243,8 @@ CSRF_TRUSTED_ORIGINS = [
     "https://*",
     "http://localhost:5173",
     "http://localhost:3000",
-    "https://5adc-98-70-14-12.ngrok-free.app/",
-    "http://career.mutaengine.cloud/"
+    "https://5adc-98-70-14-12.ngrok-free.app",
+    "http://career.mutaengine.cloud"
 ]
 CORS_ALLOW_CREDENTIALS = True
 
