@@ -82,7 +82,7 @@ class JobTemplate(BaseModel,UserModelMixin):
     position = models.CharField(max_length=255)
     department = models.CharField(max_length=255)
     description = CKEditor5Field('description', config_name='extends')
-    deadline = models.DateField()
+    deadline = models.DateTimeField()
     ctc = models.CharField(max_length=255)
     job_applicant_template = models.ForeignKey(JobApplicantTemplate, on_delete=models.SET_NULL, null=True, blank=True)
     job_assignment_template = models.ForeignKey(JobAssignmentTemplate, on_delete=models.SET_NULL, null=True, blank=True)

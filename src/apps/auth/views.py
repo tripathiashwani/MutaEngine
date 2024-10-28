@@ -23,7 +23,6 @@ from .two_fa_handlers import OTPACTION, TwoFAHandler
 
 
 class CreateUserView(generics.CreateAPIView):
-    print("CreateUserView")
     permission_classes = [permissions.AllowAny]
     serializer_class = CreateUserSerializer
 

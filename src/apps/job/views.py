@@ -51,7 +51,6 @@ class JobApplicantTemplateViewSet(ModelViewSet):
     queryset = JobApplicantTemplate.objects.all()
     serializer_class = JobApplicantTemplateSerializer
     filterset_class = JobApplicantTemplateFilterSet
-    print("JobApplicantTemplateViewSet job created")
 
     def get_object(self):
         pk = self.kwargs.get('pk', None)
@@ -64,7 +63,6 @@ class JobApplicantTemplateViewSet(ModelViewSet):
 class JobTemplateCreateView(generics.CreateAPIView):
     permission_classes = []
     authentication_classes = []
-    print("JobTemplateCreateView job created")
     serializer_class = JobTemplateWriteSerializer
 
 
@@ -81,12 +79,16 @@ class JobTemplateUpdateView(generics.UpdateAPIView):
         
 
 class JobTemplateListView(generics.ListAPIView):
+    permission_classes = []
+    authentication_classes = []
     queryset = JobTemplate.objects.all()
     serializer_class = JobTemplateReadSerializer
     filterset_class = JobTemplateFilterSet
 
 
 class JobTemplateRetrieveView(generics.RetrieveAPIView):
+    permission_classes = []
+    authentication_classes = []
     queryset = JobTemplate.objects.all()
     serializer_class = JobTemplateReadSerializer
 
