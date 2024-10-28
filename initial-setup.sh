@@ -1,3 +1,5 @@
+echo "this is the initial setup script-------------------------------------------"
+
 sudo apt-get update -y
 
 wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | 
