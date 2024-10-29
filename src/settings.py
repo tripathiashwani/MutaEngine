@@ -229,7 +229,25 @@ CORS_ALLOW_HEADERS = [
 
 CORS_ALLOW_ALL_ORIGINS = True
 
-CORS_ALLOWED_ORIGINS = []
+CORS_ALLOW_CREDENTIALS = True
+
+
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "Content-Disposition",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+]
+
+CSRF_TRUSTED_ORIGINS = ["http://localhost:8000", "http://localhost:3000" "http://localhost:3001", os.environ.get("HOST")]
+
+# CORS_ALLOWED_ORIGINS = []
 
 # CORS_ALLOWED_ORIGINS = [
 #     "http://localhost:5173",
@@ -239,15 +257,16 @@ CORS_ALLOWED_ORIGINS = []
 #     "http://*"
 # ]
 
-CSRF_TRUSTED_ORIGINS = [
-    "http://*",
-    "https://*",
-    "http://localhost:5173",
-    "http://localhost:3000",
-    "https://5adc-98-70-14-12.ngrok-free.app",
-    "http://career.mutaengine.cloud"
-]
-CORS_ALLOW_CREDENTIALS = True
+# CSRF_TRUSTED_ORIGINS = [
+#     "http://*",
+#     "https://*",
+#     "http://localhost:5173",
+#     "http://localhost:3000",
+#     "https://5adc-98-70-14-12.ngrok-free.app",
+#     "http://career.mutaengine.cloud"
+# ]
+
+# CORS_ALLOW_CREDENTIALS = True
 
 # JWT Configuration
 ACCESS_TOKEN_LIFETIME = config("ACCESS_TOKEN_LIFETIME", default=60, cast=int)
