@@ -246,7 +246,8 @@ CORS_ALLOW_HEADERS = [
     "ngrok-skip-browser-warning",
 ]
 
-CSRF_TRUSTED_ORIGINS = ["http://localhost:8000", "http://localhost:3000", "http://localhost:3001", os.environ.get("HOST")]
+CSRF_TRUSTED_ORIGINS = ["http://localhost:8000", "http://localhost:3000", "http://localhost:3001", "https://5adc-98-70-14-12.ngrok-free.app", "http://98.70.14.12",
+"http://localhost:3001", "https://career.mutaengine.cloud"]
 
 # CORS_ALLOWED_ORIGINS = []
 
