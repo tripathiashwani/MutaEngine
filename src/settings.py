@@ -242,7 +242,10 @@ CORS_ALLOWED_ORIGINS = []
 CSRF_TRUSTED_ORIGINS = [
     "http://*",
     "https://*",
-    "http://localhost:5173"
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "https://5adc-98-70-14-12.ngrok-free.app",
+    "http://career.mutaengine.cloud"
 ]
 CORS_ALLOW_CREDENTIALS = True
 
