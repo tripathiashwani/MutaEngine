@@ -245,7 +245,7 @@ CORS_ALLOW_HEADERS = [
     "x-requested-with",
 ]
 
-CSRF_TRUSTED_ORIGINS = ["http://localhost:8000", "http://localhost:3000", "http://localhost:3001", os.environ.get("HOST")]
+CSRF_TRUSTED_ORIGINS = ["http://localhost:8000", "http://localhost:3000", "http://localhost:3001", "https://5adc-98-70-14-12.ngrok-free.app","http://98.70.14.12"]
 
 # CORS_ALLOWED_ORIGINS = []
 
