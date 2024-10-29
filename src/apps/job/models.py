@@ -11,7 +11,7 @@ class TemplateExtraFieldType(models.TextChoices):
     CHECKBOX = 'checkbox', 'Checkbox'
     RADIO = 'radio', 'Radio'
     SELECT = 'select', 'Select'
-    RICH_TEXT = 'rich_text', 'Rich_Text'
+    RICH_TEXT = 'rich text', 'Rich Text'
 
 class TemplateExtraField(BaseModel):
     label = models.CharField(max_length=255)
@@ -57,8 +57,8 @@ class WorkLocationChoices(models.TextChoices):
 
 
 class WorkType(models.TextChoices):
-    FULL_TIME = 'full_time', 'Full_Time'
-    PART_TIME = 'part_time', 'Part_Time'
+    FULL_TIME = 'full time', 'Full Time'
+    PART_TIME = 'part time', 'Part Time'
     CONTRACT = 'contract', 'Contract'
     INTERNSHIP = 'internship', 'Internship'
 
@@ -81,6 +81,8 @@ class JobTemplate(BaseModel,UserModelMixin):
     )
     position = models.CharField(max_length=255)
     department = models.CharField(max_length=255)
+    experience = models.CharField(max_length=255, null=True, blank=True)
+    country_location = models.CharField(max_length=255, default="India")
     description = CKEditor5Field('description', config_name='extends')
     deadline = models.DateTimeField()
     ctc = models.CharField(max_length=255)
