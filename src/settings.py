@@ -197,19 +197,19 @@ SPECTACULAR_SETTINGS = {
 # The `CORS_ALLOW_HEADERS` setting in Django allows you to specify
 #  the headers that are allowed in cross origin requests
 
-CORS_ALLOW_HEADERS = [
-    "accept",
-    "accept-encoding",
-    "authorization",
-    "content-type",
-    "Content-Disposition",
-    "dnt",
-    "origin",
-    "user-agent",
-    "x-csrftoken",
-    "x-requested-with",
-    "Access-Control-Allow-Origin",
-]
+# CORS_ALLOW_HEADERS = [
+#     "accept",
+#     "accept-encoding",
+#     "authorization",
+#     "content-type",
+#     "Content-Disposition",
+#     "dnt",
+#     "origin",
+#     "user-agent",
+#     "x-csrftoken",
+#     "x-requested-with",
+#     "Access-Control-Allow-Origin",
+# ]
 
 
 # CORS_ALLOWED_ORIGINS = config("CORS_ALLOWED_ORIGINS", default="http://", cast=str)
@@ -243,6 +243,7 @@ CORS_ALLOW_HEADERS = [
     "user-agent",
     "x-csrftoken",
     "x-requested-with",
+    "ngrok-skip-browser-warning",
 ]
 
 CSRF_TRUSTED_ORIGINS = ["http://localhost:8000", "http://localhost:3000", "http://localhost:3001", os.environ.get("HOST")]
