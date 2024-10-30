@@ -54,6 +54,7 @@ class JobApplicantSerializer(serializers.ModelSerializer):
         role = str(job_applicant.job_template.title ) 
         last_date = job_applicant.job_template.deadline 
         assignment_detail_link = request.data.get('assignment_detail_link')
+        assignment_detail=request.data.get('assignment_detail')
         application_id = str(job_applicant.id)
          # Initialize paths
         html_template_relative_path = None
@@ -85,7 +86,7 @@ class JobApplicantSerializer(serializers.ModelSerializer):
 
         # Pass relative paths to the Celery task
         send_assignment_email_task.apply_async(
-            (str(company_name), applicant_name, to_email, role, last_date, assignment_detail_link, application_id, resume_relative_path, html_template_relative_path),
+            (str(company_name), applicant_name, to_email, role, last_date, assignment_detail_link, assignment_detail,application_id, resume_relative_path, html_template_relative_path),
             countdown=3
         )
         job_applicant.assignment_sent=True

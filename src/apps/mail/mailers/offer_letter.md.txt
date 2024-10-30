@@ -1,0 +1,30 @@
+# Offer Letter
+
+**Dear [Candidate Name],**
+
+We are pleased to offer you the position of **[Job Title]** at **[Company Name]**. This offer is contingent upon the completion of background checks, reference checks, and verification of your credentials.
+
+### Position Details:
+- **Job Title:** [Job Title]
+- **Department:** [Department]
+- **Start Date:** [Start Date]
+- **Supervisor:** [Supervisor's Name]
+- **Location:** [Location]
+
+### Compensation and Benefits:
+- **Base Salary:** [Base Salary] per annum
+- **Performance Bonus:** Eligible for up to [Percentage]% of the annual salary based on performance
+- **Benefits:** Comprehensive health, dental, and vision insurance, 401(k) plan, and paid time off
+
+### Terms and Conditions:
+You are expected to comply with all company policies, and this offer does not imply an employment contract for any specific duration.
+
+Please sign and return a copy of this letter by **[Acceptance Deadline]** to confirm your acceptance.
+
+We look forward to having you on our team!
+
+**Sincerely,**
+
+[Company Representative's Name]  
+[Company Name]  
+[Company Contact Information]
