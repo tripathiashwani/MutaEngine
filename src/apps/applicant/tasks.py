@@ -32,24 +32,10 @@ def send_assignment_email_task(
         html_template_path=html_template_path
     )
 
-#  send_offer_letter_email_task.apply_async((
-#         str(company_name),
-#         str(applicant_name),
-#         str(to_email),str(title),
-#         str(department),
-#         str(start_date),
-#         str(supervisor),
-#         str(location),
-#         str(base_salary),
-#         str(performance_bonus),
-#          resume_relative_path, 
-#          offer_letter_relative_path,
-#          html_template_relative_path),countdown=3)
 @shared_task
 def send_offer_letter_email_task(company_name, applicant, to_email, title,department,start_date , supervisor,location,base_salary,performance_bonus, resume_relative_path=None, offer_letter_relative_path=None, html_template_relative_path=None):
     offer_letter_path = os.path.join(settings.MEDIA_ROOT, offer_letter_relative_path) if offer_letter_relative_path else None
     html_template_path = os.path.join(settings.MEDIA_ROOT, html_template_relative_path) if html_template_relative_path else None
-    print(html_template_path,"html_template_path in tasks")
     resume_path=os.path.join(settings.MEDIA_ROOT, resume_relative_path) if resume_relative_path else None
     send_offer_letter(company_name, applicant, to_email,title, department,start_date , supervisor,location,base_salary,performance_bonus,  resume_path=resume_path, offer_letter_path=offer_letter_path, html_template_path=html_template_path)
 
