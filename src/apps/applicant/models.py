@@ -14,7 +14,7 @@ class JobApplicant(BaseModel):
     total_yoe = models.CharField(max_length=10, help_text="Total years of experience")
     skills = models.CharField(max_length=255, help_text="Comma-separated skills")
     linkedin = models.URLField()
-    resume = models.FileField(upload_to=get_upload_folder)
+    resume = models.FileField(upload_to=get_upload_folder, null=True, blank=False)
     assignment_sent = models.BooleanField(default=False)
     assignment_submitted = models.BooleanField(default=False)
     offer_letter_sent = models.BooleanField(default=False)
