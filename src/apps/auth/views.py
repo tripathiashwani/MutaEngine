@@ -56,12 +56,10 @@ class UserLoginView(generics.GenericAPIView):
         responses={
             "application/json": {
                 "example": {
+                    "msg": "User logged in successfully",
                     "refresh": "refresh_token",
                     "access": "access_token",
-                    "msg": "User logged in successfully",
-                    "two_fa": False,
                     "user_id": "uuid",
-                    "is_tenant_master": "bool",
                 }
             }
         }
@@ -126,12 +124,12 @@ class UserUpdateView(generics.UpdateAPIView):
     serializer_class = UserUpdateSerializer
 
     def get_queryset(self):
-        user = self.request.user
+        # user = self.request.user
         pk = self.kwargs.get("pk")
-        if pk == user.pk:
-            return User.objects.filter(pk=pk)
 
-        raise exceptions.PermissionDenied("You cannot update this user")
+        return User.objects.filter(pk=pk)
+
+        # raise exceptions.PermissionDenied("You cannot update this user")
 
 
 class RetrieveUserView(generics.RetrieveAPIView):
@@ -139,7 +137,7 @@ class RetrieveUserView(generics.RetrieveAPIView):
     queryset = User.objects.none()  # to prevent swagger error messages
 
     def get_queryset(self):
-        user = self.request.user
+        # user = self.request.user
         pk = self.kwargs['pk']
         if pk is None:
             raise exceptions.ValidationError("User id is required")
@@ -147,6 +145,7 @@ class RetrieveUserView(generics.RetrieveAPIView):
 
 
 class UserListView(generics.ListAPIView):
+    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
     serializer_class = UserSerializer
     queryset = User.objects.none()
     request: Request
