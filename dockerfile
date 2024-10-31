@@ -23,6 +23,6 @@ RUN python manage.py collectstatic --noinput
 EXPOSE 8000
 
 # Command to start Django server (or use Gunicorn for production)
-# CMD ["gunicorn", "--bind", "0.0.0.0:8000", "src.wsgi:application"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "src.wsgi:application"]
 
 
