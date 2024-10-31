@@ -4,6 +4,7 @@ from rest_framework import exceptions, generics, permissions, status
 from rest_framework.response import Response
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth.models import Group
 
 from src.apps.auth.models import User
 from src.apps.auth.serializers import (
@@ -16,6 +17,7 @@ from src.apps.auth.serializers import (
     UserLogoutSerializer,
     UserSerializer,
     UserUpdateSerializer,
+    RoleSerializer,
 )
 from src.apps.common.types import Request
 
@@ -259,3 +261,9 @@ class PasswordChangeView(generics.GenericAPIView):
         user.save()
 
         return Response({"msg": "Password changed successfully"}, status=status.HTTP_200_OK)
+
+
+class ListRoleView(generics.ListAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = RoleSerializer
+    queryset = Group.objects.all()

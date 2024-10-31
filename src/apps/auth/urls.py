@@ -12,6 +12,7 @@ from src.apps.auth.views import (
     UserLoginView,
     UserLogoutView,
     UserUpdateView,
+    ListRoleView,
 )
 
 
@@ -43,4 +44,5 @@ urlpatterns = [
         PasswordChangeView.as_view(),
         name="change-user-password-api-endpoint",
     ),
+    path("role/list/", ListRoleView.as_view(), name="list-role-api-endpoint"),
 ]
