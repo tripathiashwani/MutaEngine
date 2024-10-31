@@ -31,12 +31,12 @@ class JobApplicantSerializer(serializers.ModelSerializer):
         if job_template is None:
             raise serializers.ValidationError("Job template is required")
         
-        # job_deadline = job_template.deadline
+        job_deadline = job_template.deadline
 
-        # from datetime import datetime
-        # current_date = datetime.now()
-        # if job_deadline < current_date:
-        #     raise serializers.ValidationError("Application cannot be submiited: passed deadline")
+        from django.utils import timezone
+        current_date = timezone.now()
+        if job_deadline < current_date:
+            raise serializers.ValidationError("Application cannot be submiited: passed deadline")
 
         job_applicant = JobApplicant.objects.create(**validated_data)
 
@@ -109,13 +109,13 @@ class AssignmentSubmissionsSerializer(serializers.ModelSerializer):
         except JobApplicant.DoesNotExist:
             raise serializers.ValidationError("Application not found")
         
-        # job_deadline = application.job_template.deadline
+        job_deadline = application.job_template.deadline
 
-        # from datetime import datetime
-        # current_date = datetime.now()
+        from django.utils import timezone
+        current_date = timezone.now()
 
-        # if job_deadline < current_date:
-        #     raise serializers.ValidationError("Assignment cannot be submiited: passed deadline")
+        if job_deadline < current_date:
+            raise serializers.ValidationError("Assignment cannot be submiited: passed deadline")
 
         
         assignment_submission = AssignmentSubmission.objects.create(**validated_data)
