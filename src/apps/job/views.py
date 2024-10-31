@@ -1,12 +1,20 @@
+import os
+from django.http import HttpResponse
+from django.core.files.storage import default_storage
 from rest_framework import generics, exceptions
 from rest_framework.viewsets import ModelViewSet
-
-
+import markdown
+from rest_framework.response import Response
+from src.apps.applicant.tasks import send_offer_letter_email_task
+from rest_framework.decorators import action, api_view, authentication_classes, permission_classes
+from src.apps.applicant.models import JobApplicant
+from src.apps.common.utils import generate_pdf
 from .models import (
     JobTemplate, 
     JobApplicantTemplate, 
     JobAssignmentTemplate, 
     OfferTemplate
+   
 )
 from .serializers import (
     OfferLetterTemplateSerializer,
@@ -24,6 +32,8 @@ from .filters import (
 
 
 class OfferLetterTemplateViewSet(ModelViewSet):
+    permission_classes = []
+    authentication_classes = []
     queryset = OfferTemplate.objects.all()
     serializer_class = OfferLetterTemplateSerializer
     filterset_class = OfferLetterFilterSet
@@ -34,6 +44,112 @@ class OfferLetterTemplateViewSet(ModelViewSet):
             return OfferTemplate.objects.get(pk=pk)
         except OfferTemplate.DoesNotExist:
             raise exceptions.NotFound("Offer letter not found")
+        
+   
+    
+@api_view(['POST'])
+@authentication_classes([])
+@permission_classes([])
+def send_offer_letter(request):
+    md_file = request.FILES.get('file')
+        
+    if not md_file:
+        return Response({"error": "Markdown file required"}, status=400)
+
+    
+    content = md_file.read().decode('utf-8')
+    
+    appplicant_id = request.data.get('applicant_id')
+    applicant=JobApplicant.objects.get(id=appplicant_id)
+    applicant_name = f"{applicant.first_name} {applicant.last_name}"
+    company_name = "Mutaengine"
+    title = str(request.data.get('job_title', 'Position')),
+    department = request.data.get('department', 'Department'),
+    start_date = request.data.get('start_date', 'Start Date'),
+    supervisor = request.data.get('supervisor', 'Supervisor'),
+    location = request.data.get('location', 'Location'),
+    base_salary = request.data.get('base_salary', 'Salary'),
+    performance_bonus = request.data.get('performance_bonus', 'Bonus'),
+    acceptance_deadline = request.data.get('acceptance_deadline', 'Deadline'),
+    representative_name = request.data.get('representative_name', 'Representative'),
+    to_email = str(applicant.email)
+    placeholders = {
+        "Candidate Name": applicant_name,
+        "Job Title": request.data.get('job_title', 'Position'),
+        "Company Name": request.data.get('company_name', 'Company'),
+        "Department": request.data.get('department', 'Department'),
+        "Start Date": request.data.get('start_date', 'Start Date'),
+        "Supervisor": request.data.get('supervisor', 'Supervisor'),
+        "Location": request.data.get('location', 'Location'),
+        "Base Salary": request.data.get('base_salary', 'Salary'),
+        "Performance Bonus": request.data.get('performance_bonus', 'Bonus'),
+        "Acceptance Deadline": request.data.get('acceptance_deadline', 'Deadline'),
+        "Company Representative's Name": request.data.get('representative_name', 'Representative'),
+        "Company Contact Information": request.data.get('contact_information', 'Contact Info')
+    }
+    
+    # Generate the PDF
+    pdf_buffer = generate_pdf(content, placeholders)
+    
+    if not pdf_buffer:
+        return Response({"error": "PDF generation failed"}, status=500)
+    
+    
+    offer_letter_relative_path=None
+    html_template_relative_path=None
+    resume_relative_path=None
+    html_file = request.FILES.get('html_template')
+    resume_file = request.FILES.get('resume')
+
+    
+    if pdf_buffer:
+        try:
+            pdf_file_path = os.path.join('offer_letters', f"{applicant.first_name}_{applicant.last_name}_offer_letter.pdf")
+            path = default_storage.save(pdf_file_path, pdf_buffer)
+            offer_letter_relative_path = path
+            print(f"Offer letter saved at: {offer_letter_relative_path}")
+        except Exception as e:
+            print(f"Error saving offer letter: {e}")
+    
+    if html_file:
+        try:
+            html_file_path = os.path.join('templates', html_file.name)
+            path = default_storage.save(html_file_path, html_file)
+            html_template_relative_path = path
+            print(f"HTML template saved at: {html_template_relative_path}")
+        except Exception as e:
+            print(f"Error saving HTML template: {e}")
+    
+    if resume_file:
+        try:
+            resume_file_path = os.path.join('resumes', resume_file.name)
+            path = default_storage.save(resume_file_path, resume_file)
+            resume_relative_path = path
+            print(f"Resume saved at: {resume_relative_path}")
+        except Exception as e:
+            print(f"Error saving resume: {e}")
+    
+    send_offer_letter_email_task.apply_async((
+        str(company_name),
+        str(applicant_name),
+        str(to_email),str(title),
+        str(department),
+        str(start_date),
+        str(supervisor),
+        str(location),
+        str(base_salary),
+        str(performance_bonus),
+         resume_relative_path, 
+         offer_letter_relative_path,
+         html_template_relative_path),countdown=3)
+    
+    
+    response = HttpResponse(pdf_buffer, content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="offer_letter.pdf"'
+    return response
+
+    
+    
 
 class JobAssignmentTemplateViewSet(ModelViewSet):
     queryset = JobAssignmentTemplate.objects.all()
@@ -46,6 +162,8 @@ class JobAssignmentTemplateViewSet(ModelViewSet):
             return JobAssignmentTemplate.objects.get(pk=pk)
         except JobAssignmentTemplate.DoesNotExist:
             raise exceptions.NotFound("Job assignment template not found")
+    
+    
 
 class JobApplicantTemplateViewSet(ModelViewSet):
     queryset = JobApplicantTemplate.objects.all()

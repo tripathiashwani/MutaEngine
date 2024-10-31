@@ -24,3 +24,5 @@ EXPOSE 8000
 
 # Command to start Django server (or use Gunicorn for production)
 CMD ["gunicorn", "--bind", "0.0.0.0:8000", "src.wsgi:application"]
+
+

@@ -16,7 +16,8 @@ smtp_server = settings.EMAIL_HOST
 smtp_port = settings.EMAIL_PORT
 
 
-def send_offer_letter(company_name, applicant, to_email, role, offer_details, manager_name=None, resume_path=None, offer_letter_path=None, html_template_path=None):
+def send_offer_letter(company_name, applicant, to_email,role, department,start_date , supervisor,location,base_salary,performance_bonus, resume_path=None, offer_letter_path=None, html_template_path=None):
+    print(html_template_path,"html_template_path in mailer")
     subject = f"Offer Letter for {role} at {company_name}"
     
     # Default body if no HTML file is provided
@@ -25,15 +26,16 @@ def send_offer_letter(company_name, applicant, to_email, role, offer_details, ma
     
     We are pleased to extend an offer for the <strong>{role}</strong> position at <strong>{company_name}</strong>! Below are the details of your offer:<br><br>
     
-    <strong>Offer Details:</strong><br>
-    {offer_details}<br><br>
+    <strong>Base salary</strong><br>
+    {base_salary}<br><br>
+
     
     We are excited to have you on board and look forward to your acceptance.<br><br>
     
     If you have any questions, feel free to reach out to us.<br><br>
     
     Best regards,<br>
-    <strong>{manager_name}</strong><br>
+    <strong>{supervisor}</strong><br>
     Hiring Manager at {company_name}<br>
     {company_email}<br>
     """
@@ -50,9 +52,9 @@ def send_offer_letter(company_name, applicant, to_email, role, offer_details, ma
                     '{{ applicant }}': applicant,
                     '{{ role }}': role or 'N/A',
                     '{{ company_name }}': company_name or 'N/A',
-                    '{{ manager_name }}': manager_name or 'N/A',
+                    '{{ manager_name }}': supervisor or 'N/A',
                     '{{ start_date }}': 'N/A', 
-                    '{{ salary }}': offer_details.split(':')[1].strip(),  
+                    '{{ salary }}': base_salary or 'N/A',
                     '{{ location }}': 'Remote'  
                 }
 

@@ -3,7 +3,7 @@ from django_ckeditor_5.fields import CKEditor5Field
 from django.utils.text import slugify
 
 from src.apps.common.models import BaseModel
-from src.apps.auth.models import UserModelMixin
+from src.apps.auth.models import UserModelMixin, User
 
 class TemplateExtraFieldType(models.TextChoices):
     TEXT = 'text', 'Text'
@@ -43,8 +43,15 @@ class JobAssignmentTemplate(BaseModel):
         return self.title
 
 class OfferTemplate(BaseModel):
-    title = models.CharField(max_length=255)
-    content = CKEditor5Field('content', config_name='extends')
+    title = models.CharField(max_length=255,null=True, blank=True)
+    content = CKEditor5Field('content', config_name='extends',null=True, blank=True)
+    author = models.CharField(max_length=255,null=True, blank=True) 
+    created_date = models.DateField(auto_now_add=True, null=True, blank=True)
+    manager=models.ForeignKey(User, on_delete=models.CASCADE, related_name='offer_templates',null=True, blank=True)
+    joining_date = models.DateField(blank=True,null=True )  
+    html_content = models.TextField(null=True, blank=True)
+
+
 
     def __str__(self):
         return self.title
@@ -89,6 +96,7 @@ class JobTemplate(BaseModel,UserModelMixin):
     job_applicant_template = models.ForeignKey(JobApplicantTemplate, on_delete=models.SET_NULL, null=True, blank=True)
     job_assignment_template = models.ForeignKey(JobAssignmentTemplate, on_delete=models.SET_NULL, null=True, blank=True)
     offer_template = models.ForeignKey(OfferTemplate, on_delete=models.SET_NULL, null=True, blank=True)
+    
 
     def __str__(self):
         return self.title

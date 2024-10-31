@@ -20,6 +20,7 @@ class JobApplicant(BaseModel):
     offer_letter_sent = models.BooleanField(default=False)
     offer_letter_signed = models.BooleanField(default=False)
     submitted_offer_letter = models.FileField(null=True, blank=True)
+    offer_letter= models.FileField(upload_to=get_upload_folder, null=True, blank=True)
     applicant_accepted = models.BooleanField(default=False)
     manager=models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     joining_date = models.DateField(null=True, blank=True)
