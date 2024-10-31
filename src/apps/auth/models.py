@@ -65,21 +65,21 @@ class UserModelMixin(models.Model):
     class Meta:
         abstract = True
 
-class Role(Group):
-    title = models.CharField(max_length=255, null=False, blank=False, unique=True)
-    status = models.CharField(
-        max_length=255, blank=False, null=False, choices=Status.choices, default=Status.ACTIVE
-    )
-    responsibilities = models.TextField(null=True, blank=True)
-    description = models.TextField(null=True, blank=True)
-    parent_role = models.ForeignKey('self', null=True, blank=True, on_delete=models.SET_NULL)
-    is_deleted = models.BooleanField(default=False)
-    deleted_at = models.DateTimeField(null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    created_by = models.ForeignKey(User, null=True, blank=True, related_name='roles_created', on_delete=models.SET_NULL)
-    updated_by = models.ForeignKey(User, null=True, blank=True, related_name='roles_updated', on_delete=models.SET_NULL)
+# class Role(Group):
+#     title = models.CharField(max_length=255, null=False, blank=False, unique=True)
+#     status = models.CharField(
+#         max_length=255, blank=False, null=False, choices=Status.choices, default=Status.ACTIVE
+#     )
+#     responsibilities = models.TextField(null=True, blank=True)
+#     description = models.TextField(null=True, blank=True)
+#     parent_role = models.ForeignKey('self', null=True, blank=True, on_delete=models.SET_NULL)
+#     is_deleted = models.BooleanField(default=False)
+#     deleted_at = models.DateTimeField(null=True, blank=True)
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     updated_at = models.DateTimeField(auto_now=True)
+#     created_by = models.ForeignKey(User, null=True, blank=True, related_name='roles_created', on_delete=models.SET_NULL)
+#     updated_by = models.ForeignKey(User, null=True, blank=True, related_name='roles_updated', on_delete=models.SET_NULL)
 
 
-    def __str__(self):
-        return self.name
+#     def __str__(self):
+#         return self.name
