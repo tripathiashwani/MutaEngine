@@ -16,7 +16,7 @@ from src.apps.auth.views import (
 
 
 urlpatterns = [
-    path("user/register/", CreateUserView.as_view(), name="user-creatation-api-endpoint"),
+    path("create/user/", CreateUserView.as_view(), name="user-creatation-api-endpoint"),
     path("user/login/", UserLoginView.as_view(), name="user-login-api-endpoint"),
     path("token/refresh/", TokenRefreshView.as_view(), name="token-refresh-api-endpoint"),
     path("user/logout/", UserLogoutView.as_view(), name="user-logout-api-endpoint"),
