@@ -8,4 +8,4 @@ screen -S django -X stuff "git fetch origin deployment && git reset --hard origi
 \n"
 
 
-# check if the pipeline is working testing pipeline test3 for the third time
+# check if the pipeline is working testing pipeline test3 for the third time ,test4 for the fourth time
