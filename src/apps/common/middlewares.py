@@ -13,7 +13,7 @@ THROTTLE_RULES = {
     #applicant
     '/api/v1/applicant/': {'limit': 10, 'period': 300},
     '/api/v1/applicant/assignment/submission/': {'limit': 5, 'period': 300},
-    '/api/v1/applicant/submit/signed/offer/letter/': {'limit': 1, 'period': 300},
+    '/api/v1/applicant/submit/signed/offer/letter/': {'limit': 100, 'period': 300},
 
     # auth
     '/api/v1/auth/token/refresh/': {'limit': 5, 'period': 300},
