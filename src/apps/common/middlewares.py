@@ -13,7 +13,7 @@ THROTTLE_RULES = {
     #applicant
     '/api/v1/applicant/': {'limit': 10, 'period': 300},
     '/api/v1/applicant/assignment/submission/': {'limit': 5, 'period': 300},
-    '/api/v1/applicant/submit/signed/offer/letter/': {'limit': 1, 'period': 300},
+    '/api/v1/applicant/submit/signed/offer/letter/': {'limit': 100, 'period': 300},
 
     # auth
     '/api/v1/auth/token/refresh/': {'limit': 5, 'period': 300},
@@ -29,21 +29,21 @@ THROTTLE_RULES = {
     '/api/v1/auth/user/logout/': {'limit': 5, 'period': 300},
 
     #company
-    '/api/v1/company/api/company': {'limit': 5, 'period': 300},
+    '/api/v1/company/api/company': {'limit': 500, 'period': 300},
 
 
     #job
-    '/api/v1/job/': {'limit': 5, 'period': 300},
-    'api/v1/job/applicant/template/': {'limit': 5, 'period': 300},
-    'api/v1/job/applicant/template/<uuid:pk>/': {'limit': 5, 'period': 300},
-    'api/v1/job/assignment/template/': {'limit': 5, 'period': 300},
+    '/api/v1/job/': {'limit': 500, 'period': 300},
+    'api/v1/job/applicant/template/': {'limit': 500, 'period': 300},
+    'api/v1/job/applicant/template/<uuid:pk>/': {'limit': 500, 'period': 300},
+    'api/v1/job/assignment/template/': {'limit': 500, 'period': 300},
     'api/v1/job/create/': {'limit': 5, 'period': 300},
-    'api/v1/job/list/': {'limit': 5, 'period': 300},
-    'api/v1/job/offer/letter': {'limit': 5, 'period': 300},
+    'api/v1/job/list/': {'limit': 500, 'period': 300},
+    'api/v1/job/offer/letter': {'limit': 500, 'period': 300},
 
 
     #mail
-    'api/v1/mail/': {'limit': 5, 'period': 300},
+    'api/v1/mail/': {'limit': 500, 'period': 300},
 
 
 

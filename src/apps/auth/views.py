@@ -4,6 +4,7 @@ from rest_framework import exceptions, generics, permissions, status
 from rest_framework.response import Response
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth.models import Group
 
 from src.apps.auth.models import User
 from src.apps.auth.serializers import (
@@ -16,6 +17,7 @@ from src.apps.auth.serializers import (
     UserLogoutSerializer,
     UserSerializer,
     UserUpdateSerializer,
+    RoleSerializer,
 )
 from src.apps.common.types import Request
 
@@ -23,7 +25,7 @@ from .two_fa_handlers import OTPACTION, TwoFAHandler
 
 
 class CreateUserView(generics.CreateAPIView):
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
     serializer_class = CreateUserSerializer
 
     @extend_schema(
@@ -36,13 +38,13 @@ class CreateUserView(generics.CreateAPIView):
         }
     )
     def post(self, request, *args, **kwargs):
-        print(request.data)
+
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = serializer.save()
+        serializer.save()
         headers = self.get_success_headers(serializer.data)
         return Response(
-            {"msg": "User registration successful"},
+            {"msg": "User created successfully"},
             status=status.HTTP_201_CREATED,
             headers=headers
         )
@@ -56,12 +58,10 @@ class UserLoginView(generics.GenericAPIView):
         responses={
             "application/json": {
                 "example": {
+                    "msg": "User logged in successfully",
                     "refresh": "refresh_token",
                     "access": "access_token",
-                    "msg": "User logged in successfully",
-                    "two_fa": False,
                     "user_id": "uuid",
-                    "is_tenant_master": "bool",
                 }
             }
         }
@@ -126,12 +126,12 @@ class UserUpdateView(generics.UpdateAPIView):
     serializer_class = UserUpdateSerializer
 
     def get_queryset(self):
-        user = self.request.user
+        # user = self.request.user
         pk = self.kwargs.get("pk")
-        if pk == user.pk:
-            return User.objects.filter(pk=pk)
 
-        raise exceptions.PermissionDenied("You cannot update this user")
+        return User.objects.filter(pk=pk)
+
+        # raise exceptions.PermissionDenied("You cannot update this user")
 
 
 class RetrieveUserView(generics.RetrieveAPIView):
@@ -139,7 +139,7 @@ class RetrieveUserView(generics.RetrieveAPIView):
     queryset = User.objects.none()  # to prevent swagger error messages
 
     def get_queryset(self):
-        user = self.request.user
+        # user = self.request.user
         pk = self.kwargs['pk']
         if pk is None:
             raise exceptions.ValidationError("User id is required")
@@ -147,6 +147,7 @@ class RetrieveUserView(generics.RetrieveAPIView):
 
 
 class UserListView(generics.ListAPIView):
+    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
     serializer_class = UserSerializer
     queryset = User.objects.none()
     request: Request
@@ -260,3 +261,9 @@ class PasswordChangeView(generics.GenericAPIView):
         user.save()
 
         return Response({"msg": "Password changed successfully"}, status=status.HTTP_200_OK)
+
+
+class ListRoleView(generics.ListAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = RoleSerializer
+    queryset = Group.objects.all()

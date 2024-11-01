@@ -18,7 +18,7 @@ company_password = settings.EMAIL_HOST_PASSWORD
 smtp_server = settings.EMAIL_HOST
 smtp_port = settings.EMAIL_PORT
 
-def send_assignment(company_name, applicant, to_email, role, last_date, assignment_detail_link, application_id, start_date=None, salary=None, location=None, manager_name=None, resume_path=None, html_template_path=None):
+def send_assignment(company_name, applicant, to_email, role, last_date, assignment_detail_link,assignment_detail, application_id, start_date=None, salary=None, location=None, manager_name=None, resume_path=None, html_template_path=None):
     subject = f"Assignment for {role} at {company_name}"
     print("at send_assignment")
     print(resume_path,"resume_path at send_assignment")
@@ -33,7 +33,8 @@ def send_assignment(company_name, applicant, to_email, role, last_date, assignme
         We want to evaluate your problem-solving skills, and your ability to build secure and scalable systems. This assignment is designed to assess how you approach real-world problems,
         code quality, and best practices.<br><br>
         <strong>Assignment Details:</strong><br>
-        {assignment_detail_link}<br><br>
+        {assignment_detail}<br><br>
+        <strong>Assignment Link:</strong> <a href="{assignment_detail_link}">{assignment_detail_link}</a><br><br>
         <strong>Submission Deadline:</strong> {last_date}<br>
         Best regards,<br>
         <strong>{company_name}</strong><br>
@@ -56,7 +57,11 @@ def send_assignment(company_name, applicant, to_email, role, last_date, assignme
                     '{{ start_date }}': start_date or 'N/A',
                     '{{ salary }}': salary or 'N/A',
                     '{{ location }}': location or 'N/A',
-                    '{{ manager_name }}': manager_name or 'N/A'
+                    '{{ manager_name }}': manager_name or 'N/A',
+                    '{{ last_date }}': last_date,
+                    '{{ assignment_detail_link }}': assignment_detail_link or 'N/A',
+                    '{{ assignment_detail }}': assignment_detail or 'N/A'
+
                 }
 
                 for placeholder, replacement in replacements.items():

@@ -9,13 +9,19 @@ from .views import (
     JobTemplateListView,
     JobTemplateRetrieveView,
     JobTemplateDeleteView,
+    send_offer_letter
 )
 
 urlpatterns = [
     path(
         "offer/letter/", 
         OfferLetterTemplateViewSet.as_view({"get": "list", "post": "create"}), 
-        name="offer-letter-template-list"
+        name="offer-letter-template-list-create"
+    ),
+    path(
+        "offer/letter/upload-md/", 
+        send_offer_letter,
+        name="offer-letter-template-create"
     ),
     path(
         "offer/letter/<uuid:pk>/", 

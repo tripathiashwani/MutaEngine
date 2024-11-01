@@ -37,21 +37,31 @@ INSTALLED_APPS = [
     "src.apps.mail",
     "src.apps.company",
     "src.apps.job",
-    "src.apps.applicant",
-    'django_redis',
+    "src.apps.applicant", 
+    'django_redis'
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    "corsheaders.middleware.CorsMiddleware",
+    
     'src.apps.common.middlewares.DynamicThrottlingMiddleware',
 ]
+
+
+CSP_DEFAULT_SRC = ("'self'",)
+CSP_SCRIPT_SRC = ("'self'", "https://trusted.cdn.com")
+CSP_STYLE_SRC = ("'self'", "https://trusted.cdn.com")
+
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
+
 
 ROOT_URLCONF = 'src.urls'
 
@@ -187,6 +197,41 @@ SPECTACULAR_SETTINGS = {
 # The `CORS_ALLOW_HEADERS` setting in Django allows you to specify
 #  the headers that are allowed in cross origin requests
 
+# CORS_ALLOW_HEADERS = [
+#     "accept",
+#     "accept-encoding",
+#     "authorization",
+#     "content-type",
+#     "Content-Disposition",
+#     "dnt",
+#     "origin",
+#     "user-agent",
+#     "x-csrftoken",
+#     "x-requested-with",
+#     "Access-Control-Allow-Origin",
+# ]
+
+
+# CORS_ALLOWED_ORIGINS = config("CORS_ALLOWED_ORIGINS", default="http://", cast=str)
+# if isinstance(CORS_ALLOWED_ORIGINS, str) and CORS_ALLOWED_ORIGINS != "http://":
+#     CORS_ALLOWED_ORIGINS = CORS_ALLOWED_ORIGINS.split(",")
+#     CORS_ALLOW_ALL_ORIGINS = config("CORS_ALLOW_ALL_ORIGINS", default=False, cast=bool)
+# else:
+#     CORS_ALLOW_ALL_ORIGINS = True
+#     CORS_ALLOWED_ORIGINS = []
+
+# # CSRF Configuration
+# CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", default="http://localhost:8000", cast=str)
+# if isinstance(CSRF_TRUSTED_ORIGINS, str) and CSRF_TRUSTED_ORIGINS:
+#     CSRF_TRUSTED_ORIGINS = CSRF_TRUSTED_ORIGINS.split(",")
+# else:
+#     CSRF_TRUSTED_ORIGINS = []
+
+CORS_ALLOW_ALL_ORIGINS = True
+
+CORS_ALLOW_CREDENTIALS = True
+
+
 CORS_ALLOW_HEADERS = [
     "accept",
     "accept-encoding",
@@ -198,24 +243,32 @@ CORS_ALLOW_HEADERS = [
     "user-agent",
     "x-csrftoken",
     "x-requested-with",
+    "ngrok-skip-browser-warning",
 ]
 
+CSRF_TRUSTED_ORIGINS = ["http://localhost:8000", "http://localhost:3000", "http://localhost:3001", "https://5adc-98-70-14-12.ngrok-free.app", "http://98.70.14.12",
+"http://localhost:3001", "https://career.mutaengine.cloud"]
 
-CORS_ALLOWED_ORIGINS = config("CORS_ALLOWED_ORIGINS", default="http://", cast=str)
-if isinstance(CORS_ALLOWED_ORIGINS, str) and CORS_ALLOWED_ORIGINS != "http://":
-    CORS_ALLOWED_ORIGINS = CORS_ALLOWED_ORIGINS.split(",")
-    CORS_ALLOW_ALL_ORIGINS = config("CORS_ALLOW_ALL_ORIGINS", default=False, cast=bool)
-else:
-    CORS_ALLOW_ALL_ORIGINS = True
-    CORS_ALLOWED_ORIGINS = []
+# CORS_ALLOWED_ORIGINS = []
 
-# CSRF Configuration
-CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", default="http://localhost:8000", cast=str)
-if isinstance(CSRF_TRUSTED_ORIGINS, str) and CSRF_TRUSTED_ORIGINS:
-    CSRF_TRUSTED_ORIGINS = CSRF_TRUSTED_ORIGINS.split(",")
-else:
-    CSRF_TRUSTED_ORIGINS = []
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:5173",
+#     "http://localhost:3000",
+#     "http://127.0.0.1:8000",
+#     "https://*",
+#     "http://*"
+# ]
 
+# CSRF_TRUSTED_ORIGINS = [
+#     "http://*",
+#     "https://*",
+#     "http://localhost:5173",
+#     "http://localhost:3000",
+#     "https://5adc-98-70-14-12.ngrok-free.app",
+#     "http://career.mutaengine.cloud"
+# ]
+
+# CORS_ALLOW_CREDENTIALS = True
 
 # JWT Configuration
 ACCESS_TOKEN_LIFETIME = config("ACCESS_TOKEN_LIFETIME", default=60, cast=int)

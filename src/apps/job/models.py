@@ -3,7 +3,7 @@ from django_ckeditor_5.fields import CKEditor5Field
 from django.utils.text import slugify
 
 from src.apps.common.models import BaseModel
-from src.apps.auth.models import UserModelMixin
+from src.apps.auth.models import UserModelMixin, User
 
 class TemplateExtraFieldType(models.TextChoices):
     TEXT = 'text', 'Text'
@@ -11,7 +11,7 @@ class TemplateExtraFieldType(models.TextChoices):
     CHECKBOX = 'checkbox', 'Checkbox'
     RADIO = 'radio', 'Radio'
     SELECT = 'select', 'Select'
-    RICH_TEXT = 'rich_text', 'Rich_Text'
+    RICH_TEXT = 'rich text', 'Rich Text'
 
 class TemplateExtraField(BaseModel):
     label = models.CharField(max_length=255)
@@ -43,8 +43,15 @@ class JobAssignmentTemplate(BaseModel):
         return self.title
 
 class OfferTemplate(BaseModel):
-    title = models.CharField(max_length=255)
-    content = CKEditor5Field('content', config_name='extends')
+    title = models.CharField(max_length=255,null=True, blank=True)
+    content = CKEditor5Field('content', config_name='extends',null=True, blank=True)
+    author = models.CharField(max_length=255,null=True, blank=True) 
+    created_date = models.DateField(auto_now_add=True, null=True, blank=True)
+    manager=models.ForeignKey(User, on_delete=models.CASCADE, related_name='offer_templates',null=True, blank=True)
+    joining_date = models.DateField(blank=True,null=True )  
+    html_content = models.TextField(null=True, blank=True)
+
+
 
     def __str__(self):
         return self.title
@@ -57,14 +64,14 @@ class WorkLocationChoices(models.TextChoices):
 
 
 class WorkType(models.TextChoices):
-    FULL_TIME = 'full_time', 'Full_Time'
-    PART_TIME = 'part_time', 'Part_Time'
+    FULL_TIME = 'full time', 'Full Time'
+    PART_TIME = 'part time', 'Part Time'
     CONTRACT = 'contract', 'Contract'
     INTERNSHIP = 'internship', 'Internship'
 
 class JobTemplate(BaseModel,UserModelMixin):
     title = models.CharField(max_length=255)
-    slug = models.SlugField(unique=True, max_length=150, blank=True)
+    slug = models.SlugField(max_length=150, blank=True, null=True)
     work_location = models.CharField(
         max_length=255,
         null=False,
@@ -81,12 +88,15 @@ class JobTemplate(BaseModel,UserModelMixin):
     )
     position = models.CharField(max_length=255)
     department = models.CharField(max_length=255)
+    experience = models.CharField(max_length=255, null=True, blank=True)
+    country_location = models.CharField(max_length=255, default="India")
     description = CKEditor5Field('description', config_name='extends')
-    deadline = models.DateField()
+    deadline = models.DateTimeField()
     ctc = models.CharField(max_length=255)
     job_applicant_template = models.ForeignKey(JobApplicantTemplate, on_delete=models.SET_NULL, null=True, blank=True)
     job_assignment_template = models.ForeignKey(JobAssignmentTemplate, on_delete=models.SET_NULL, null=True, blank=True)
     offer_template = models.ForeignKey(OfferTemplate, on_delete=models.SET_NULL, null=True, blank=True)
+    
 
     def __str__(self):
         return self.title

@@ -31,12 +31,12 @@ class JobApplicantSerializer(serializers.ModelSerializer):
         if job_template is None:
             raise serializers.ValidationError("Job template is required")
         
-        job_deadline = job_template.deadline
+        # job_deadline = job_template.deadline
 
-        from datetime import date
-        current_date = date.today()
-        if job_deadline < current_date:
-            raise serializers.ValidationError("Application cannot be submiited: passed deadline")
+        # from datetime import datetime
+        # current_date = datetime.now()
+        # if job_deadline < current_date:
+        #     raise serializers.ValidationError("Application cannot be submiited: passed deadline")
 
         job_applicant = JobApplicant.objects.create(**validated_data)
 
@@ -53,7 +53,8 @@ class JobApplicantSerializer(serializers.ModelSerializer):
         to_email = job_applicant.email
         role = str(job_applicant.job_template.title ) 
         last_date = job_applicant.job_template.deadline 
-        assignment_detail_link = request.data.get('assignment_detail_link')
+        assignment_detail_link = f"https://career.mutaengine.cloud/{job_applicant.job_template.pk}/submit-assignment-form"
+        assignment_detail=request.data.get('assignment_detail')
         application_id = str(job_applicant.id)
          # Initialize paths
         html_template_relative_path = None
@@ -61,7 +62,7 @@ class JobApplicantSerializer(serializers.ModelSerializer):
 
         # Save uploaded HTML template file
         html_file = request.FILES.get('html_template')
-        print(request.FILES)
+        # print(request.FILES)
         if html_file:
             try:
                 html_file_path = os.path.join('templates', html_file.name)
@@ -85,7 +86,7 @@ class JobApplicantSerializer(serializers.ModelSerializer):
 
         # Pass relative paths to the Celery task
         send_assignment_email_task.apply_async(
-            (str(company_name), applicant_name, to_email, role, last_date, assignment_detail_link, application_id, resume_relative_path, html_template_relative_path),
+            (str(company_name), applicant_name, to_email, role, last_date, assignment_detail_link, assignment_detail,application_id, resume_relative_path, html_template_relative_path),
             countdown=3
         )
         job_applicant.assignment_sent=True
@@ -108,12 +109,13 @@ class AssignmentSubmissionsSerializer(serializers.ModelSerializer):
         except JobApplicant.DoesNotExist:
             raise serializers.ValidationError("Application not found")
         
-        job_deadline = application.job_template.deadline
+        # job_deadline = application.job_template.deadline
 
-        from datetime import date
-        current_date = date.today()
-        if job_deadline < current_date:
-            raise serializers.ValidationError("Assignment cannot be submiited: passed deadline")
+        # from datetime import datetime
+        # current_date = datetime.now()
+
+        # if job_deadline < current_date:
+        #     raise serializers.ValidationError("Assignment cannot be submiited: passed deadline")
 
         
         assignment_submission = AssignmentSubmission.objects.create(**validated_data)
@@ -166,12 +168,14 @@ class AssignmentSubmissionsSerializer(serializers.ModelSerializer):
         application.save()
         # company_name, applicant, to_email, role, offer_details, manager_name=None, resume_relative_path=None, offer_letter_relative_path=None, html_template_relative_path=None
         send_offer_letter_email_task.apply_async(
-            (str(company_name), applicant_name, to_email, role,offer_details,manager_name, resume_relative_path, offer_letter_relative_path,html_template_relative_path),
+            (str(company_name), applicant_name,applicant_id, to_email, role,offer_details,manager_name, resume_relative_path, offer_letter_relative_path,html_template_relative_path),
             countdown=3
         )
         return assignment_submission
+    
 class OfferletterSubmissionSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField()
+
     class Meta:
         model = JobApplicant
         fields = ['id', 'submitted_offer_letter']
