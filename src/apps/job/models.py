@@ -71,7 +71,7 @@ class WorkType(models.TextChoices):
 
 class JobTemplate(BaseModel,UserModelMixin):
     title = models.CharField(max_length=255)
-    slug = models.SlugField(unique=True, max_length=150, blank=True)
+    slug = models.SlugField(max_length=150, blank=True, null=True)
     work_location = models.CharField(
         max_length=255,
         null=False,

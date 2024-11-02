@@ -66,7 +66,7 @@ class SubmitSignedOfferLetterView(generics.GenericAPIView):
         job_applicant.save()
         handle_mailer_task(request, job_applicant)
         
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({"msg":"Submitted successfully"}, status=status.HTTP_200_OK)
 
 
 def handle_mailer_task(request, applicant):

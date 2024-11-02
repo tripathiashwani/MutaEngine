@@ -1,21 +1,28 @@
 from django.core.cache import cache
 from django.db import transaction
 from rest_framework import serializers
+from django.contrib.auth.models import Group
 
 from .two_fa_handlers import TwoFAHandler, OTPACTION
 from .models import User
 
 
 class CreateUserSerializer(serializers.ModelSerializer):
+    role_id = serializers.IntegerField(required=False)
 
     class Meta:
         model = User
-        fields = ("email", "first_name", "last_name", "phone", "password",)
+        fields = ("email", "first_name", "last_name", "phone", "password","role_id")
         extra_kwargs = {"password": {"write_only": True}}
 
     def create(self, validated_data):
         with transaction.atomic():
             user = User.objects.create_user(**validated_data, is_active=False)
+            role_id = validated_data.get("role_id")
+            if role_id:
+                group = Group.objects.get(id=role_id)
+                user.groups.add(group)
+
             return user
 
 
@@ -158,3 +165,10 @@ class ChangePasswordSerializer(serializers.Serializer):
         else:
             attrs["user"] = user
         return super().validate(attrs)
+
+
+class RoleSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Group
+        fields = ["id", "name"]

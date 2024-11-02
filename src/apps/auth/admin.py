@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import User, Role
+from .models import User
 
 
 @admin.register(User)
@@ -11,9 +11,9 @@ class UserAdmin(admin.ModelAdmin):
     ordering = ('-created_at',)
 
 
-@admin.register(Role)
-class RoleAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'status',)
-    search_fields = ('title',)
-    list_filter = ('status',)
-    ordering = ('-created_at',)
+# @admin.register(Role)
+# class RoleAdmin(admin.ModelAdmin):
+#     list_display = ('id', 'title', 'status',)
+#     search_fields = ('title',)
+#     list_filter = ('status',)
+#     ordering = ('-created_at',)

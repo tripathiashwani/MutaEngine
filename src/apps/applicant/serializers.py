@@ -54,7 +54,6 @@ class JobApplicantSerializer(serializers.ModelSerializer):
         role = str(job_applicant.job_template.title ) 
         last_date = job_applicant.job_template.deadline 
         assignment_detail_link = f"https://career.mutaengine.cloud/{job_applicant.job_template.pk}/submit-assignment-form"
-        # f"https://career.mutaengine.cloud/{job_applicant.job_template.pk}/submit-assignment-form"
         assignment_detail=request.data.get('assignment_detail')
         application_id = str(job_applicant.id)
          # Initialize paths
@@ -174,12 +173,14 @@ class AssignmentSubmissionsSerializer(serializers.ModelSerializer):
         application.save()
         # company_name, applicant, to_email, role, offer_details, manager_name=None, resume_relative_path=None, offer_letter_relative_path=None, html_template_relative_path=None
         send_offer_letter_email_task.apply_async(
-            (str(company_name), applicant_name, to_email, role,offer_details,manager_name, resume_relative_path, offer_letter_relative_path,html_template_relative_path),
+            (str(company_name), applicant_name,applicant_id, to_email, role,offer_details,manager_name, resume_relative_path, offer_letter_relative_path,html_template_relative_path),
             countdown=3
         )
         return assignment_submission
+    
 class OfferletterSubmissionSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField()
+
     class Meta:
         model = JobApplicant
         fields = ['id', 'submitted_offer_letter']
