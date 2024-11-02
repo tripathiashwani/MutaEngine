@@ -6,6 +6,7 @@ from rest_framework.viewsets import ModelViewSet
 import markdown
 from rest_framework.response import Response
 from src.apps.applicant.tasks import send_offer_letter_email_task
+from drf_spectacular.utils import extend_schema, OpenApiExample, OpenApiTypes, OpenApiParameter
 from rest_framework.decorators import action, api_view, authentication_classes, permission_classes
 from src.apps.applicant.models import JobApplicant
 from src.apps.common.utils import generate_pdf
@@ -22,12 +23,13 @@ from .serializers import (
     JobApplicantTemplateSerializer,
     JobTemplateWriteSerializer,
     JobTemplateReadSerializer,
+    OfferLetterRequestSerializer
 )
 from .filters import (
     OfferLetterFilterSet,
     JobAssignmentTemplateFilterSet,
     JobApplicantTemplateFilterSet,
-    JobTemplateFilterSet,
+    JobTemplateFilterSet
 )
 
 
@@ -47,10 +49,46 @@ class OfferLetterTemplateViewSet(ModelViewSet):
         
    
     
+
+
+@extend_schema(
+    request=OfferLetterRequestSerializer,
+    responses={
+        200: OpenApiTypes.BINARY,
+        400: OpenApiTypes.OBJECT,
+        500: OpenApiTypes.OBJECT
+    },
+    examples=[
+        OpenApiExample(
+            "Example request",
+            description="Example of a request to send an offer letter.",
+            value={
+                "applicant_id": 1,
+                "job_title": "Software Engineer",
+                "department": "Engineering",
+                "start_date": "2024-12-01",
+                "supervisor": "John Doe",
+                "location": "Remote",
+                "base_salary": "100,000",
+                "performance_bonus": "10,000",
+                "acceptance_deadline": "2024-11-15",
+                "representative_name": "Jane Smith",
+                "contact_information": "info@mutaengine.com"
+            },
+            request_only=True
+        )
+    ],
+    parameters=[
+        OpenApiParameter(name="file", type=OpenApiTypes.BINARY, required=True, description="Markdown file for offer letter"),
+        OpenApiParameter(name="html_template", type=OpenApiTypes.BINARY, required=False, description="HTML template file for offer letter"),
+        OpenApiParameter(name="resume", type=OpenApiTypes.BINARY, required=False, description="Resume file")
+    ],
+    description="API to generate and send an offer letter as a PDF and email."
+)
 @api_view(['POST'])
 @authentication_classes([])
-@permission_classes([])
 def send_offer_letter(request):
+    
     md_file = request.FILES.get('file')
         
     if not md_file:
