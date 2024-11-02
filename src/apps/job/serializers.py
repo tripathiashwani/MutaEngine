@@ -13,28 +13,28 @@ class OfferLetterTemplateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OfferTemplate
-        exclude = ["is_deleted"]
+        fields = "__all__"
 
 
 class JobAssignmentTemplateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = JobAssignmentTemplate
-        exclude = ["is_deleted"]
+        fields = "__all__"
 
 
 class TemplateExtraFieldSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TemplateExtraField
-        exclude = ["is_deleted"]
+        fields = "__all__"
 
 class JobApplicantTemplateSerializer(serializers.ModelSerializer):
     template_extra_fields = TemplateExtraFieldSerializer(many=True)
 
     class Meta:
         model = JobApplicantTemplate
-        exclude = ["is_deleted"]
+        fields = "__all__"
 
     def create(self, validated_data):
         template_extra_fields = validated_data.pop('template_extra_fields')
@@ -52,7 +52,7 @@ class JobTemplateWriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = JobTemplate
-        exclude = ["is_deleted"]
+        fields = "__all__"
 
 
 class JobTemplateReadSerializer(serializers.ModelSerializer):
@@ -62,7 +62,7 @@ class JobTemplateReadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = JobTemplate
-        exclude = ["is_deleted"]
+        fields = "__all__"
     
     def get_job_applicant_template(self, obj):
         if obj.job_applicant_template:

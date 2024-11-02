@@ -11,7 +11,7 @@ class JobApplicantExtraFieldSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = JobApplicantExtraField
-        exclude = ["job_applicant","is_deleted"]
+        exclude = ["job_applicant"]
 
 
 
@@ -21,7 +21,7 @@ class JobApplicantSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = JobApplicant
-        exclude = ["is_deleted"]
+        fields = "__all__"
 
     def create(self, validated_data):
         extra_fields_data = validated_data.pop('job_applicant_extra_fields', [])
@@ -98,7 +98,7 @@ class AssignmentSubmissionsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AssignmentSubmission
-        exclude = ["is_deleted"]
+        fields = "__all__"
 
     def create(self, validated_data):
 

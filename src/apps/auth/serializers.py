@@ -84,7 +84,6 @@ class UserSerializer(serializers.ModelSerializer):
             "password",
             "groups",
             "user_permissions",
-            "is_deleted",
             "is_superuser",
             "is_staff",
         )
