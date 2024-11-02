@@ -28,10 +28,7 @@ def send_assignment(company_name, applicant, to_email, role, last_date, assignme
         We hope this email finds you well. 
         Attached below are the details of the assignment for the <strong>{role}</strong> position at <strong>{company_name}</strong>.<br><br>
         Kindly submit your assignment before the deadline.<br><br>
-        Your application ID is: {application_id}<br><br>
-        <strong>Assignment Objective:</strong><br>
-        We want to evaluate your problem-solving skills, and your ability to build secure and scalable systems. This assignment is designed to assess how you approach real-world problems,
-        code quality, and best practices.<br><br>
+        
         <strong>Assignment Details:</strong><br>
         {assignment_detail}<br><br>
         <strong>Assignment Link:</strong> <a href="{assignment_detail_link}">{assignment_detail_link}</a><br><br>

@@ -11,7 +11,7 @@ class JobApplicantExtraFieldSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = JobApplicantExtraField
-        exclude = ["job_applicant","is_deleted"]
+        exclude = ["job_applicant"]
 
 
 
@@ -21,7 +21,7 @@ class JobApplicantSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = JobApplicant
-        exclude = ["is_deleted"]
+        fields = "__all__"
 
     def create(self, validated_data):
         extra_fields_data = validated_data.pop('job_applicant_extra_fields', [])
@@ -31,12 +31,12 @@ class JobApplicantSerializer(serializers.ModelSerializer):
         if job_template is None:
             raise serializers.ValidationError("Job template is required")
         
-        # job_deadline = job_template.deadline
+        job_deadline = job_template.deadline
 
-        # from datetime import datetime
-        # current_date = datetime.now()
-        # if job_deadline < current_date:
-        #     raise serializers.ValidationError("Application cannot be submiited: passed deadline")
+        from django.utils import timezone
+        current_date = timezone.now()
+        if job_deadline < current_date:
+            raise serializers.ValidationError("Application cannot be submiited: passed deadline")
 
         job_applicant = JobApplicant.objects.create(**validated_data)
 
@@ -74,7 +74,8 @@ class JobApplicantSerializer(serializers.ModelSerializer):
 
 
         # Save uploaded resume file
-        resume_file = request.FILES.get('resume')
+        # resume_file = request.FILES.get('resume')
+        resume_file=None
         if resume_file:
             try:
                 resume_file_path = os.path.join('resumes', resume_file.name)
@@ -86,9 +87,13 @@ class JobApplicantSerializer(serializers.ModelSerializer):
 
         # Pass relative paths to the Celery task
         send_assignment_email_task.apply_async(
-            (str(company_name), applicant_name, to_email, role, last_date, assignment_detail_link, assignment_detail,application_id, resume_relative_path, html_template_relative_path),
-            countdown=3
-        )
+    (str(company_name), applicant_name, to_email, role, last_date, assignment_detail_link, assignment_detail, application_id),
+    countdown=3,
+    kwargs={
+        'resume_relative_path': resume_relative_path,
+        'html_template_relative_path': html_template_relative_path
+    }
+)
         job_applicant.assignment_sent=True
         job_applicant.save()
         return job_applicant
@@ -98,7 +103,7 @@ class AssignmentSubmissionsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AssignmentSubmission
-        exclude = ["is_deleted"]
+        fields = "__all__"
 
     def create(self, validated_data):
 
@@ -109,13 +114,13 @@ class AssignmentSubmissionsSerializer(serializers.ModelSerializer):
         except JobApplicant.DoesNotExist:
             raise serializers.ValidationError("Application not found")
         
-        # job_deadline = application.job_template.deadline
+        job_deadline = application.job_template.deadline
 
-        # from datetime import datetime
-        # current_date = datetime.now()
+        from django.utils import timezone
+        current_date = timezone.now()
 
-        # if job_deadline < current_date:
-        #     raise serializers.ValidationError("Assignment cannot be submiited: passed deadline")
+        if job_deadline < current_date:
+            raise serializers.ValidationError("Assignment cannot be submiited: passed deadline")
 
         
         assignment_submission = AssignmentSubmission.objects.create(**validated_data)
