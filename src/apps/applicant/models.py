@@ -31,7 +31,7 @@ class JobApplicant(BaseModel):
 class JobApplicantExtraField(BaseModel):
     job_applicant = models.ForeignKey(JobApplicant, on_delete=models.CASCADE)
     template_extra_field = models.ForeignKey(TemplateExtraField, on_delete=models.CASCADE)
-    value = models.JSONField()
+    value = models.TextField(null=True)
 
     def __str__(self):
         return f"Extra Field for {self.job_applicant.first_name} {self.job_applicant.last_name}"

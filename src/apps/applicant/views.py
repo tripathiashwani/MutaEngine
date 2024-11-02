@@ -2,6 +2,7 @@ import os
 from rest_framework import exceptions
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import generics
+from drf_spectacular.utils import extend_schema
 
 from .serializers import JobApplicantSerializer, AssignmentSubmissionsSerializer, OfferletterSubmissionSerializer
 from .models import JobApplicant, AssignmentSubmission
@@ -35,7 +36,7 @@ class AssignmentSubmissionViewSet(ModelViewSet):
     
     def get_object(self):
         pk = self.kwargs.get("pk")
-        print(pk)
+        # print(pk)
         try:
             return AssignmentSubmission.objects.get(pk=pk)
         except AssignmentSubmission.DoesNotExist:
