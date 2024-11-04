@@ -53,7 +53,7 @@ class JobApplicantSerializer(serializers.ModelSerializer):
         to_email = job_applicant.email
         role = str(job_applicant.job_template.title ) 
         last_date = job_applicant.job_template.deadline 
-        assignment_detail_link = f"https://career.mutaengine.cloud/{job_applicant.job_template.pk}/submit-assignment-form"
+        assignment_detail_link = f"https://career.mutaengine.cloud/career/{job_applicant.job_template.pk}/submit-assignment-form"
         assignment_detail=request.data.get('assignment_detail')
         application_id = str(job_applicant.id)
          # Initialize paths

@@ -87,6 +87,7 @@ class OfferLetterTemplateViewSet(ModelViewSet):
 )
 @api_view(['POST'])
 @authentication_classes([])
+@permission_classes([])
 def send_offer_letter(request):
     
     md_file = request.FILES.get('file')
@@ -170,6 +171,7 @@ def send_offer_letter(request):
     send_offer_letter_email_task.apply_async((
         str(company_name),
         str(applicant_name),
+        str(appplicant_id),
         str(to_email),str(title),
         str(department),
         str(start_date),
