@@ -87,6 +87,7 @@ class OfferLetterTemplateViewSet(ModelViewSet):
 )
 @api_view(['POST'])
 @authentication_classes([])
+@permission_classes([]) 
 def send_offer_letter(request):
     
     md_file = request.FILES.get('file')
@@ -101,16 +102,19 @@ def send_offer_letter(request):
     applicant=JobApplicant.objects.get(id=appplicant_id)
     applicant_name = f"{applicant.first_name} {applicant.last_name}"
     company_name = "Mutaengine"
-    title = str(request.data.get('job_title', 'Position')),
-    department = request.data.get('department', 'Department'),
-    start_date = request.data.get('start_date', 'Start Date'),
-    supervisor = request.data.get('supervisor', 'Supervisor'),
-    location = request.data.get('location', 'Location'),
-    base_salary = request.data.get('base_salary', 'Salary'),
-    performance_bonus = request.data.get('performance_bonus', 'Bonus'),
-    acceptance_deadline = request.data.get('acceptance_deadline', 'Deadline'),
-    representative_name = request.data.get('representative_name', 'Representative'),
-    to_email = str(applicant.email)
+    title = str(request.data.get('job_title', 'Position'))
+    department = request.data.get('department', 'Department')
+    start_date = request.data.get('start_date', 'Start Date')
+    supervisor = request.data.get('supervisor', 'Supervisor')
+    location = request.data.get('location', 'Location')
+    base_salary = request.data.get('base_salary', 'Salary')
+    performance_bonus = request.data.get('performance_bonus', 'Bonus')
+    acceptance_deadline = request.data.get('acceptance_deadline', 'Deadline')
+    representative_name = request.data.get('representative_name', 'Representative')
+    to_email = applicant.email
+    print(f"Applicant email: {to_email}")
+    if not to_email or '@' not in to_email:
+     return Response({"error": "Invalid applicant email address"}, status=400)
     placeholders = {
         "Candidate Name": applicant_name,
         "Job Title": request.data.get('job_title', 'Position'),
@@ -170,7 +174,8 @@ def send_offer_letter(request):
     send_offer_letter_email_task.apply_async((
         str(company_name),
         str(applicant_name),
-        str(to_email),str(title),
+        str(appplicant_id),
+        to_email,str(title),
         str(department),
         str(start_date),
         str(supervisor),
