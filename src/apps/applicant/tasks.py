@@ -33,12 +33,19 @@ def send_assignment_email_task(
     )
 
 @shared_task
-def send_offer_letter_email_task(company_name, applicant, applicant_id,to_email, title,department,start_date , supervisor,location,base_salary,performance_bonus, resume_relative_path=None, offer_letter_relative_path=None, html_template_relative_path=None):
+def send_offer_letter_email_task(
+    company_name, applicant, applicant_id, to_email, title, department, start_date, 
+    supervisor, location, base_salary, performance_bonus, 
+    resume_relative_path, offer_letter_relative_path, html_template_relative_path
+):
     offer_letter_path = os.path.join(settings.MEDIA_ROOT, offer_letter_relative_path) if offer_letter_relative_path else None
     html_template_path = os.path.join(settings.MEDIA_ROOT, html_template_relative_path) if html_template_relative_path else None
-    resume_path=os.path.join(settings.MEDIA_ROOT, resume_relative_path) if resume_relative_path else None
-    send_offer_letter(company_name, applicant, applicant_id, to_email,title, department,start_date , supervisor,location,base_salary,performance_bonus,  resume_path=resume_path, offer_letter_path=offer_letter_path, html_template_path=html_template_path)
-
+    resume_path = os.path.join(settings.MEDIA_ROOT, resume_relative_path) if resume_relative_path else None
+    send_offer_letter(
+        company_name, applicant, applicant_id, to_email, title, department, start_date, 
+        supervisor, location, base_salary, performance_bonus, 
+        resume_path=resume_path, offer_letter_path=offer_letter_path, html_template_path=html_template_path
+    )
     
 @shared_task
 def send_confirmation_email_task(company_name, applicant, to_email, role, joining_date, manager_name=None, resume_relative_path=None, html_template_relative__path=None):

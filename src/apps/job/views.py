@@ -87,6 +87,7 @@ class OfferLetterTemplateViewSet(ModelViewSet):
 )
 @api_view(['POST'])
 @authentication_classes([])
+@permission_classes([])
 def send_offer_letter(request):
     
     md_file = request.FILES.get('file')
@@ -167,19 +168,21 @@ def send_offer_letter(request):
         except Exception as e:
             print(f"Error saving resume: {e}")
     
-    send_offer_letter_email_task.apply_async((
+    send_offer_letter_email_task.apply_async(
         str(company_name),
         str(applicant_name),
+        str(appplicant_id),
         str(to_email),str(title),
         str(department),
         str(start_date),
         str(supervisor),
         str(location),
         str(base_salary),
-        str(performance_bonus),
-         resume_relative_path, 
-         offer_letter_relative_path,
-         html_template_relative_path),countdown=3)
+        str(performance_bonus),kwargs={
+        'resume_relative_path': resume_relative_path,
+        'html_template_relative_path': html_template_relative_path,
+        'offer_letter_relative_path': offer_letter_relative_path
+       }, countdown=3)
     
     
     response = HttpResponse(pdf_buffer, content_type='application/pdf')
