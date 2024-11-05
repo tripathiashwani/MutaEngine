@@ -25,9 +25,9 @@ def send_offer_letter(company_name, applicant, applicant_id, to_email,role, depa
     Dear {applicant},<br><br>
     
     We are pleased to extend an offer for the <strong>{role}</strong> position at <strong>{company_name}</strong>! Below are the details of your offer:<br><br>
+    {f'<strong>Base Salary:</strong><br>{base_salary}<br><br>' if base_salary else ''}
+    {f'<strong>Performance Bonus:</strong><br>{performance_bonus}<br><br>' if performance_bonus else ''}
     
-    <strong>Base salary</strong><br>
-    {base_salary}<br><br>
 
     
     <strong><a href="{f"https://career.mutaengine.cloud/career/{applicant_id}/submit-assignment-form"}" target="_blank">Submit Signed offer letter</a><strong>
