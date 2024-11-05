@@ -51,7 +51,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     
-    'src.apps.common.middlewares.DynamicThrottlingMiddleware',
+    # 'src.apps.common.middlewares.DynamicThrottlingMiddleware',
 ]
 
 
