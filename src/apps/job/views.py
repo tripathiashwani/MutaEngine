@@ -192,6 +192,8 @@ def send_offer_letter(request):
     
 
 class JobAssignmentTemplateViewSet(ModelViewSet):
+    permission_classes=[]
+    authentication_classes=[]
     queryset = JobAssignmentTemplate.objects.all()
     serializer_class = JobAssignmentTemplateSerializer
     filterset_class = JobAssignmentTemplateFilterSet
