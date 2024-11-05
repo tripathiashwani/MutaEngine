@@ -30,7 +30,8 @@ def send_offer_letter(company_name, applicant, applicant_id, to_email,role, depa
     
 
     
-    <strong><a href="{f"https://career.mutaengine.cloud/career/{applicant_id}/submit-assignment-form"}" target="_blank">Submit Signed offer letter</a><strong>
+    <strong><a href="{f"https://career.mutaengine.cloud/career/
+    {applicant_id}/offer-letter-signed-form"}" target="_blank">Submit Signed offer letter</a><strong>
     
     We are excited to have you on board and look forward to your acceptance.<br><br>
     
