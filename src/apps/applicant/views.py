@@ -74,7 +74,7 @@ def handle_mailer_task(request, applicant):
     applicant_name = f"{applicant.first_name} {applicant.last_name}"
     to_email = str(applicant.email)
     role = str(applicant.job_template.title)
-    manager_name = str(applicant.manager.first_name) if applicant.manager else "No manager assigned"
+    manager_name = str(applicant.manager.first_name) if applicant.manager else "Mutaengine"
 
     joining_date = str(applicant.joining_date)
     html_file = request.FILES.get('html_template')
