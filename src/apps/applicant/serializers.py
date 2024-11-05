@@ -177,7 +177,7 @@ class AssignmentSubmissionsSerializer(serializers.ModelSerializer):
         send_offer_letter_email_task.apply_async(
     (
         company_name, applicant_name, applicant_id, to_email, role, application.job_template.title, application.joining_date,
-        manager_name, application.job_template.work_location, base_salary, performance_bonus,
+        manager_name, application.job_template.work_location,application.job_template.id, base_salary, performance_bonus,
         resume_relative_path, offer_letter_relative_path, html_template_relative_path
     ),
     countdown=3
