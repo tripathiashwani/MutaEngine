@@ -23,7 +23,7 @@ from .serializers import (
     JobApplicantTemplateSerializer,
     JobTemplateWriteSerializer,
     JobTemplateReadSerializer,
-    # OfferLetterRequestSerializer
+    OfferLetterRequestSerializer
 )
 from .filters import (
     OfferLetterFilterSet,
