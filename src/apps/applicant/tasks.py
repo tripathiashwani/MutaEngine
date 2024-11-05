@@ -35,7 +35,7 @@ def send_assignment_email_task(
 @shared_task
 def send_offer_letter_email_task(
     company_name, applicant, applicant_id, to_email, title, department, start_date, 
-    supervisor, location, base_salary, performance_bonus, 
+    supervisor, location,job_template_id, base_salary, performance_bonus, 
     resume_relative_path, offer_letter_relative_path, html_template_relative_path
 ):
     offer_letter_path = os.path.join(settings.MEDIA_ROOT, offer_letter_relative_path) if offer_letter_relative_path else None
@@ -43,7 +43,7 @@ def send_offer_letter_email_task(
     resume_path = os.path.join(settings.MEDIA_ROOT, resume_relative_path) if resume_relative_path else None
     send_offer_letter(
         company_name, applicant, applicant_id, to_email, title, department, start_date, 
-        supervisor, location, base_salary, performance_bonus, 
+        supervisor, location,job_template_id, base_salary, performance_bonus, 
         resume_path=resume_path, offer_letter_path=offer_letter_path, html_template_path=html_template_path
     )
     
