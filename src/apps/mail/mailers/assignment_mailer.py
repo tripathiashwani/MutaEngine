@@ -29,8 +29,7 @@ def send_assignment(company_name, applicant, to_email, role, last_date, assignme
         Attached below are the details of the assignment for the <strong>{role}</strong> position at <strong>{company_name}</strong>.<br><br>
         Kindly submit your assignment before the deadline.<br><br>
         <strong>Applicant ID:</strong> {application_id}<br>
-        <strong>Assignment Details:</strong><br>
-        {assignment_detail}<br><br>
+        {f'<strong>Assignment Details:</strong><br>{assignment_detail}<br><br>' if assignment_detail else ''}
         <strong>Assignment Link:</strong> <a href="{assignment_detail_link}">{assignment_detail_link}</a><br><br>
         <strong>Submission Deadline:</strong> {last_date}<br>
         Best regards,<br>
