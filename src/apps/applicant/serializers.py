@@ -137,6 +137,7 @@ class AssignmentSubmissionsSerializer(serializers.ModelSerializer):
         offer_details = request.data.get('offer_details')
         manager_name = request.data.get('manager_name')
         performance_bonus = request.data.get('performance_bonus')
+        base_salary = request.data.get('base_salary')
 
         # Save uploaded HTML template file
         html_file = request.FILES.get('html_template')
@@ -174,14 +175,13 @@ class AssignmentSubmissionsSerializer(serializers.ModelSerializer):
         application.save()
     #    def send_offer_letter_email_task(company_name, applicant, applicant_id,to_email, title,department,start_date , supervisor,location,base_salary,performance_bonus, resume_relative_path=None, offer_letter_relative_path=None, html_template_relative_path=None):
         send_offer_letter_email_task.apply_async(
-            ( company_name, applicant_name, applicant_id, to_email, role, offer_details, application.department, application.start_date, manager_name, application.location, application.base_salary, performance_bonus),
-            kwargs={
-        'resume_relative_path': resume_relative_path,
-        'html_template_relative_path': html_template_relative_path,
-        'offer_letter_relative_path': offer_letter_relative_path
-        },
-            countdown=3
-        )
+    (
+        company_name, applicant_name, applicant_id, to_email, role, application.job_template.title, application.joining_date,
+        manager_name, application.job_template.work_location, base_salary, performance_bonus,
+        resume_relative_path, offer_letter_relative_path, html_template_relative_path
+    ),
+    countdown=3
+    )
         return assignment_submission
     
 class OfferletterSubmissionSerializer(serializers.ModelSerializer):
