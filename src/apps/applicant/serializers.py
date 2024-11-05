@@ -192,3 +192,9 @@ class OfferletterSubmissionSerializer(serializers.ModelSerializer):
         if not attrs.get('submitted_offer_letter'):
             raise serializers.ValidationError('Signed Offer letter is required')
         return super().validate(attrs)
+
+
+class TilesDataSerializer(serializers.Serializer):
+    active_job_post = serializers.IntegerField()
+    new_job_applicant = serializers.IntegerField()
+    assignment_to_review = serializers.IntegerField()

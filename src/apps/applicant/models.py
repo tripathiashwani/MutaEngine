@@ -44,6 +44,7 @@ class AssignmentSubmission(BaseModel):
     deployment_url = models.URLField()
     project_github_url = models.URLField()
     video_url = models.URLField()
+    assignment_reviewed = models.BooleanField(default=False)
 
     def __str__(self) -> str:
         return f'{self.first_name} {self.last_name} assignment submission'   
