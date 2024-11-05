@@ -167,7 +167,7 @@ def send_offer_letter(request):
             print(f"Resume saved at: {resume_relative_path}")
         except Exception as e:
             print(f"Error saving resume: {e}")
-    
+
     send_offer_letter_email_task.apply_async((
         str(company_name),
         str(applicant_name),
