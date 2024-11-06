@@ -8,6 +8,7 @@ class Status(models.TextChoices):
 # Create your models here.
 class BaseModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+   
     status = models.CharField(
         max_length=30,
         null=False,

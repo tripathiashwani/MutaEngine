@@ -18,7 +18,7 @@ company_password = settings.EMAIL_HOST_PASSWORD
 smtp_server = settings.EMAIL_HOST
 smtp_port = settings.EMAIL_PORT
 
-def send_assignment(company_name, applicant, to_email, role, last_date, assignment_detail_link,assignment_detail, application_id, start_date=None, salary=None, location=None, manager_name=None, resume_path=None, html_template_path=None):
+def send_assignment(company_name, applicant, to_email, role, last_date, assignment_detail_link,assignment_detail, application_id,assignment_objective, start_date=None, salary=None, location=None, manager_name=None, resume_path=None, html_template_path=None):
     subject = f"Assignment for {role} at {company_name}"
     print("at send_assignment")
     print(resume_path,"resume_path at send_assignment")
@@ -28,6 +28,8 @@ def send_assignment(company_name, applicant, to_email, role, last_date, assignme
         We hope this email finds you well. 
         Attached below are the details of the assignment for the <strong>{role}</strong> position at <strong>{company_name}</strong>.<br><br>
         Kindly submit your assignment before the deadline.<br><br>
+        {f'<strong>Assignment Objective:</strong> {assignment_objective}<br>' if assignment_objective else ''}
+        
         <strong>Applicant ID:</strong> {application_id}<br>
         {f'<strong>Assignment Details:</strong><br>{assignment_detail}<br><br>' if assignment_detail else ''}
         <strong>Assignment Link:</strong> <a href="{assignment_detail_link}">{assignment_detail_link}</a><br><br>
