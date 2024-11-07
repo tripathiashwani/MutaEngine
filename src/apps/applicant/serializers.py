@@ -45,7 +45,7 @@ class JobApplicantSerializer(serializers.ModelSerializer):
             if not is_safe_pdf(resume_file):
                 raise serializers.ValidationError("Invalid resume file format. Only PDF files are allowed.")
 
-            job_applicant = JobApplicant.objects.create(**validated_data)
+        job_applicant = JobApplicant.objects.create(**validated_data)
 
         
         if extra_fields_data:
