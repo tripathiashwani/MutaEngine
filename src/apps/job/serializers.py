@@ -10,6 +10,7 @@ from .models import (
 
 
 class OfferLetterTemplateSerializer(serializers.ModelSerializer):
+    manager = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
         model = OfferTemplate
