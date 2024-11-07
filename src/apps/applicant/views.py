@@ -4,13 +4,21 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework import generics
 from drf_spectacular.utils import extend_schema
 
-from .serializers import JobApplicantSerializer, AssignmentSubmissionsSerializer, OfferletterSubmissionSerializer
+from .serializers import (
+    JobApplicantSerializer, 
+    AssignmentSubmissionsSerializer, 
+    OfferletterSubmissionSerializer,
+    TilesDataSerializer
+)
 from .models import JobApplicant, AssignmentSubmission
 from src.apps.company.models import Company
 from .tasks import send_confirmation_email_task
 from django.core.files.storage import default_storage
 from rest_framework.response import Response
 from rest_framework import status
+
+from src.apps.job.models import JobTemplate
+
 
 class JobApplicantViewSet(ModelViewSet):
     permission_classes = []
@@ -75,7 +83,8 @@ def handle_mailer_task(request, applicant):
     applicant_name = f"{applicant.first_name} {applicant.last_name}"
     to_email = str(applicant.email)
     role = str(applicant.job_template.title)
-    manager_name = str(applicant.manager.first_name)
+    manager_name = str(applicant.manager.first_name) if applicant.manager else "Mutaengine"
+
     joining_date = str(applicant.joining_date)
     html_file = request.FILES.get('html_template')
     html_template_relative_path = None
@@ -117,4 +126,39 @@ def handle_mailer_task(request, applicant):
     
 
     
-  
+class TilesDataView(generics.GenericAPIView):
+    permission_classes = []
+    authentication_classes = []
+    serializer_class = TilesDataSerializer
+
+    def get(self, request, *args, **kwargs):
+
+        active_job_post = JobTemplate.objects.only("id","status").filter(status="active").count()
+
+        from django.utils import timezone
+        from datetime import timedelta
+
+        current_date = timezone.now()
+        start_of_day = current_date.replace(hour=0, minute=0, second=0, microsecond=0)
+        end_of_day = start_of_day + timedelta(days=1)
+
+        new_job_applicant = JobApplicant.objects.only("id","created_at").filter(
+            created_at__gte=start_of_day,
+            created_at__lt=end_of_day
+        ).count()
+
+        assignment_to_review = (
+            AssignmentSubmission.objects
+            .only("id","assignment_reviewed")
+            .filter(assignment_reviewed=False).count()
+        )
+
+        data = {
+            "active_job_post" : active_job_post,
+            "new_job_applicant" : new_job_applicant,
+            "assignment_to_review" : assignment_to_review,
+        }
+
+        serializer = self.get_serializer(data)
+
+        return Response(serializer.data)

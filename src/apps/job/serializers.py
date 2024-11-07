@@ -57,8 +57,8 @@ class JobTemplateWriteSerializer(serializers.ModelSerializer):
 
 class JobTemplateReadSerializer(serializers.ModelSerializer):
     job_applicant_template = serializers.SerializerMethodField()
-    # job_assignment_template = serializers.SerializerMethodField()
-    # offer_template = serializers.SerializerMethodField()
+    job_assignment_template = serializers.SerializerMethodField()
+    offer_template = serializers.SerializerMethodField()
 
     class Meta:
         model = JobTemplate
@@ -70,14 +70,31 @@ class JobTemplateReadSerializer(serializers.ModelSerializer):
         else:
             return None
         
-    # def get_job_assignment_template(self, obj):
-    #     if obj.job_assignment_template:
-    #         return JobAssignmentTemplateSerializer(obj.job_assignment_template).data
-    #     else:
-    #         return None
+    def get_job_assignment_template(self, obj):
+        if obj.job_assignment_template:
+            return JobAssignmentTemplateSerializer(obj.job_assignment_template).data
+        else:
+            return None
         
-    # def get_offer_template(self, obj):
-    #     if obj.offer_template:
-    #         return OfferLetterTemplateSerializer(obj.offer_template).data
-    #     else:
-    #         return None
+    def get_offer_template(self, obj):
+        if obj.offer_template:
+            return OfferLetterTemplateSerializer(obj.offer_template).data
+        else:
+            return None
+
+
+class OfferLetterRequestSerializer(serializers.Serializer):
+    applicant_id = serializers.IntegerField()
+    job_title = serializers.CharField(required=False, default="Position")
+    department = serializers.CharField(required=False, default="Department")
+    start_date = serializers.CharField(required=False, default="Start Date")
+    supervisor = serializers.CharField(required=False, default="Supervisor")
+    location = serializers.CharField(required=False, default="Location")
+    base_salary = serializers.CharField(required=False, default="Salary")
+    performance_bonus = serializers.CharField(required=False, default="Bonus")
+    acceptance_deadline = serializers.CharField(required=False, default="Deadline")
+    representative_name = serializers.CharField(required=False, default="Representative")
+    contact_information = serializers.CharField(required=False, default="Contact Info")
+    file = serializers.FileField(required=True)
+    html_template = serializers.FileField(required=False)
+    resume = serializers.FileField(required=False)

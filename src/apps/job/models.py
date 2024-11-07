@@ -38,6 +38,7 @@ class JobApplicantTemplate(BaseModel):
 class JobAssignmentTemplate(BaseModel):
     title = models.CharField(max_length=255)
     content = CKEditor5Field('content', config_name='extends')
+    objective = models.CharField(max_length=255,null=True, blank=True)
 
     def __str__(self):
         return self.title

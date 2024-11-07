@@ -55,17 +55,14 @@ def get_upload_folder(instance, filename):
     return "/".join([model_path, filename])
 
 
-def generate_pdf(md_content, placeholders):
-    # Step 1: Convert markdown to HTML
-    html_content = markdown.markdown(md_content)
-
-    # Step 2: Replace placeholders with actual data
+def generate_pdf(content, placeholders):
+    # Step 1: Replace placeholders with actual data
     for key, value in placeholders.items():
-        html_content = html_content.replace(f"[{key}]", str(value))
+        content = content.replace(f"[{key}]", str(value))
 
-    # Step 3: Convert HTML to PDF
+    # Step 2: Convert HTML to PDF
     pdf_buffer = BytesIO()
-    pisa_status = pisa.CreatePDF(html_content, dest=pdf_buffer)
+    pisa_status = pisa.CreatePDF(content, dest=pdf_buffer)
     
     # Check for any errors
     if pisa_status.err:

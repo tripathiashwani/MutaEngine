@@ -4,8 +4,9 @@ import os
 from django.core.files.storage import default_storage
 from django.conf import settings
 from .models import JobApplicant, JobApplicantExtraField, AssignmentSubmission
-
+from src.apps.common.checks import is_safe_pdf
 from src.apps.company.models import Company
+from src.apps.common.utils import generate_pdf
 
 class JobApplicantExtraFieldSerializer(serializers.ModelSerializer):
 
@@ -38,7 +39,13 @@ class JobApplicantSerializer(serializers.ModelSerializer):
         if job_deadline < current_date:
             raise serializers.ValidationError("Application cannot be submiited: passed deadline")
 
-        job_applicant = JobApplicant.objects.create(**validated_data)
+        request = self.context['request']
+        resume_file = request.FILES.get('resume')
+        if resume_file:
+            if not is_safe_pdf(resume_file):
+                raise serializers.ValidationError("Invalid resume file format. Only PDF files are allowed.")
+
+            job_applicant = JobApplicant.objects.create(**validated_data)
 
         
         if extra_fields_data:
@@ -46,19 +53,22 @@ class JobApplicantSerializer(serializers.ModelSerializer):
                 JobApplicantExtraField.objects.create(**extra_field_data, job_applicant=job_applicant)
 
         
-        request = self.context['request']
+        
         # company_name = Company.objects.all().first().name
         company_name="Mutaengine"
         applicant_name = f"{job_applicant.first_name} {job_applicant.last_name}"
         to_email = job_applicant.email
         role = str(job_applicant.job_template.title ) 
         last_date = job_applicant.job_template.deadline 
-        assignment_detail_link = f"https://career.mutaengine.cloud/career/{job_applicant.job_template.pk}/submit-assignment-form"
+        # assignment_detail_link = f"https://career.mutaengine.cloud/career/{job_applicant.job_template.pk}/submit-assignment-form"
+        # assignment_detail_link = f"https://career.mutaengine.cloud/career/{job_applicant.job_template.job_assignment_template.id}/assignment-details"
+        assignment_detail_link = f"https://career.mutaengine.cloud/career/{job_applicant.job_template.id}/assignment-details"
         assignment_detail=request.data.get('assignment_detail')
         application_id = str(job_applicant.id)
          # Initialize paths
         html_template_relative_path = None
         resume_relative_path = None
+        assignment_objective=job_applicant.job_template.job_assignment_template.objective
 
         # Save uploaded HTML template file
         html_file = request.FILES.get('html_template')
@@ -74,20 +84,22 @@ class JobApplicantSerializer(serializers.ModelSerializer):
 
 
         # Save uploaded resume file
-        # resume_file = request.FILES.get('resume')
-        resume_file=None
+        resume_file = request.FILES.get('resume')
+        # resume_file=None
         if resume_file:
             try:
                 resume_file_path = os.path.join('resumes', resume_file.name)
                 path = default_storage.save(resume_file_path, resume_file)
-                resume_relative_path = path
+                
+                
+                resume_relative_path = None
                 print(f"Resume saved at: {resume_relative_path}")
             except Exception as e:
                 print(f"Error saving resume: {e}")
 
         # Pass relative paths to the Celery task
         send_assignment_email_task.apply_async(
-    (str(company_name), applicant_name, to_email, role, last_date, assignment_detail_link, assignment_detail, application_id),
+    (str(company_name), applicant_name, to_email, role, last_date, assignment_detail_link, assignment_detail, application_id,assignment_objective),
     countdown=3,
     kwargs={
         'resume_relative_path': resume_relative_path,
@@ -136,6 +148,8 @@ class AssignmentSubmissionsSerializer(serializers.ModelSerializer):
         request = self.context['request']
         offer_details = request.data.get('offer_details')
         manager_name = request.data.get('manager_name')
+        performance_bonus = request.data.get('performance_bonus')
+        base_salary = request.data.get('base_salary')
 
         # Save uploaded HTML template file
         html_file = request.FILES.get('html_template')
@@ -161,21 +175,27 @@ class AssignmentSubmissionsSerializer(serializers.ModelSerializer):
             except Exception as e:
                 print(f"Error saving resume: {e}")
                 
-        offer_letter_file = request.FILES.get('offer_letter')
+        offer_letter_file_html = request.FILES.get('offer_letter_html')
+        offer_letter_file = get_pdf(offer_letter_file_html,request)
+        print(offer_letter_file)
         if offer_letter_file:
             try:
-                offer_letter_file_path = os.path.join('offer_letters', offer_letter_file.name)
+                offer_letter_file_path = os.path.join('offer_letters', f"{applicant_name}_offer_letter.pdf")
                 path = default_storage.save(offer_letter_file_path,offer_letter_file)
                 offer_letter_relative_path = path
                 print(f"offer_letter saved at: {offer_letter_relative_path}")
             except Exception as e:
                 print(f"Error saving offer_letter: {e}")
         application.save()
-        # company_name, applicant, to_email, role, offer_details, manager_name=None, resume_relative_path=None, offer_letter_relative_path=None, html_template_relative_path=None
+    #    def send_offer_letter_email_task(company_name, applicant, applicant_id,to_email, title,department,start_date , supervisor,location,base_salary,performance_bonus, resume_relative_path=None, offer_letter_relative_path=None, html_template_relative_path=None):
         send_offer_letter_email_task.apply_async(
-            (str(company_name), applicant_name,applicant_id, to_email, role,offer_details,manager_name, resume_relative_path, offer_letter_relative_path,html_template_relative_path),
-            countdown=3
-        )
+    (
+        company_name, applicant_name, applicant_id, to_email, role, application.job_template.title, application.joining_date,
+        manager_name, application.job_template.work_location,application.job_template.id, base_salary, performance_bonus,
+        resume_relative_path, offer_letter_relative_path, html_template_relative_path
+    ),
+    countdown=3
+    )
         return assignment_submission
     
 class OfferletterSubmissionSerializer(serializers.ModelSerializer):
@@ -192,3 +212,42 @@ class OfferletterSubmissionSerializer(serializers.ModelSerializer):
         if not attrs.get('submitted_offer_letter'):
             raise serializers.ValidationError('Signed Offer letter is required')
         return super().validate(attrs)
+
+def get_pdf(file, request):
+    try:
+        # Read the HTML content of the uploaded file
+        html_content = file.read().decode('utf-8')  # Assuming the file is in UTF-8 encoding
+
+        applicant_id = request.data.get('applicant_id')
+        applicant = JobApplicant.objects.get(id=applicant_id)
+        applicant_name = f"{applicant.first_name} {applicant.last_name}"
+        company_name = "Mutaengine"
+        
+        # Get other data from the request
+        placeholders = {
+            "Candidate Name": applicant_name,
+            "Job Title": request.data.get('job_title', 'Position'),
+            "Company Name": company_name,
+            "Department": request.data.get('department', 'Department'),
+            "Start Date": request.data.get('start_date', 'Start Date'),
+            "Supervisor": request.data.get('supervisor', 'Supervisor'),
+            "Location": request.data.get('location', 'Location'),
+            "Base Salary": request.data.get('base_salary', 'Salary'),
+            "Performance Bonus": request.data.get('performance_bonus', 'Bonus'),
+            "Acceptance Deadline": request.data.get('acceptance_deadline', 'Deadline'),
+            "Company Representative's Name": request.data.get('representative_name', 'Representative'),
+            "Company Contact Information": request.data.get('contact_information', 'Contact Info')
+        }
+    
+        # Generate the PDF from the HTML content
+        pdf_buffer = generate_pdf(html_content, placeholders)
+        
+        return pdf_buffer
+    except Exception as e:
+        print(f"Error generating PDF: {e}")
+        return None
+    
+class TilesDataSerializer(serializers.Serializer):
+    active_job_post = serializers.IntegerField()
+    new_job_applicant = serializers.IntegerField()
+    assignment_to_review = serializers.IntegerField()

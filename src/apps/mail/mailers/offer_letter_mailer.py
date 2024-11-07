@@ -16,7 +16,7 @@ smtp_server = settings.EMAIL_HOST
 smtp_port = settings.EMAIL_PORT
 
 
-def send_offer_letter(company_name, applicant, applicant_id, to_email,role, department,start_date , supervisor,location,base_salary,performance_bonus, resume_path=None, offer_letter_path=None, html_template_path=None):
+def send_offer_letter(company_name, applicant, applicant_id, to_email,role, department,start_date , supervisor,location,job_template_id,base_salary,performance_bonus, resume_path=None, offer_letter_path=None, html_template_path=None):
     print(html_template_path,"html_template_path in mailer")
     subject = f"Offer Letter for {role} at {company_name}"
     
@@ -25,12 +25,12 @@ def send_offer_letter(company_name, applicant, applicant_id, to_email,role, depa
     Dear {applicant},<br><br>
     
     We are pleased to extend an offer for the <strong>{role}</strong> position at <strong>{company_name}</strong>! Below are the details of your offer:<br><br>
+    {f'<strong>Base Salary:</strong><br>{base_salary}<br><br>' if base_salary else ''}
+    {f'<strong>Performance Bonus:</strong><br>{performance_bonus}<br><br>' if performance_bonus else ''}
     
-    <strong>Base salary</strong><br>
-    {base_salary}<br><br>
 
     
-    <strong><a href="{f"https://career.mutaengine.cloud/{applicant_id}/submit-assignment-form"}" target="_blank">Submit Signed offer letter</a><strong>
+    <strong><a href="{f"https://career.mutaengine.cloud/career/{job_template_id}/offer-letter-signed-form"}" target="_blank">Submit Signed offer letter</a><strong>
     
     We are excited to have you on board and look forward to your acceptance.<br><br>
     
