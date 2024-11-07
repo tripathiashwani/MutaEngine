@@ -64,7 +64,7 @@ class JobApplicantSerializer(serializers.ModelSerializer):
         # assignment_detail_link = f"https://career.mutaengine.cloud/career/{job_applicant.job_template.job_assignment_template.id}/assignment-details"
         assignment_detail_link = f"https://career.mutaengine.cloud/career/{job_applicant.job_template.id}/assignment-details"
         assignment_detail=request.data.get('assignment_detail')
-        application_id = str(job_applicant.id)
+        application_id = str(job_applicant.application_id)
          # Initialize paths
         html_template_relative_path = None
         resume_relative_path = None
@@ -99,13 +99,13 @@ class JobApplicantSerializer(serializers.ModelSerializer):
 
         # Pass relative paths to the Celery task
         send_assignment_email_task.apply_async(
-    (str(company_name), applicant_name, to_email, role, last_date, assignment_detail_link, assignment_detail, application_id,assignment_objective),
-    countdown=3,
-    kwargs={
-        'resume_relative_path': resume_relative_path,
-        'html_template_relative_path': html_template_relative_path
-    }
-)
+            (str(company_name), applicant_name, to_email, role, last_date, assignment_detail_link, assignment_detail, application_id,assignment_objective),
+            countdown=3,
+            kwargs={
+                'resume_relative_path': resume_relative_path,
+                'html_template_relative_path': html_template_relative_path
+            }
+        )
         job_applicant.assignment_sent=True
         job_applicant.save()
         return job_applicant
