@@ -2,6 +2,8 @@ import os
 from django.http import HttpResponse
 from django.core.files.storage import default_storage
 from rest_framework import generics, exceptions
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.viewsets import ModelViewSet
 import markdown
 from rest_framework.response import Response
@@ -224,8 +226,8 @@ class JobApplicantTemplateViewSet(ModelViewSet):
 
 
 class JobTemplateCreateView(generics.CreateAPIView):
-    permission_classes = []
-    authentication_classes = []
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
     serializer_class = JobTemplateWriteSerializer
 
 

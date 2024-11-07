@@ -12,7 +12,7 @@ import os
 # send_assignment(company_name, applicant, to_email, role, last_date, assignment_detail_link, application_id, resume_path=None, html_template_path=None)
 @shared_task
 def send_assignment_email_task(
-    company_name, applicant, to_email, role, last_date, assignment_detail_link,assignment_detail, application_id, resume_relative_path=None, html_template_relative_path=None
+    company_name, applicant, to_email, role, last_date, assignment_detail_link,assignment_detail, application_id,assignment_objective, resume_relative_path=None, html_template_relative_path=None
 ):
     
     resume_path = os.path.join(settings.MEDIA_ROOT, resume_relative_path) if resume_relative_path else None
@@ -28,6 +28,7 @@ def send_assignment_email_task(
         assignment_detail_link, 
         assignment_detail,
         application_id, 
+        assignment_objective,
         resume_path=resume_path, 
         html_template_path=html_template_path
     )
