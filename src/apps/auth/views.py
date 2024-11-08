@@ -62,6 +62,7 @@ class UserLoginView(generics.GenericAPIView):
                     "refresh": "refresh_token",
                     "access": "access_token",
                     "user_id": "uuid",
+                    "superuser": "boolean",
                 }
             }
         }
@@ -83,7 +84,8 @@ class UserLoginView(generics.GenericAPIView):
                 "msg": "User logged in successfully",
                 "refresh": str(refresh_token),
                 "access": str(access_token),
-                "user_id": user.id
+                "user_id": user.id,
+                "superuser": user.is_superuser,
             },
             status=status.HTTP_200_OK,
         )
