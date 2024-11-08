@@ -199,18 +199,19 @@ class AssignmentSubmissionsSerializer(serializers.ModelSerializer):
         return assignment_submission
     
 class OfferletterSubmissionSerializer(serializers.ModelSerializer):
-    id = serializers.UUIDField()
+    application_id = serializers.UUIDField()
 
     class Meta:
         model = JobApplicant
-        fields = ['id', 'submitted_offer_letter']
+        fields = ['application_id', 'submitted_offer_letter']
 
     def validate(self, attrs):
-        if not attrs.get('id'):
-            raise serializers.ValidationError('Job applicant ID is required')
+        if not attrs.get('application_id'):
+            raise serializers.ValidationError('Job application ID is required')
 
         if not attrs.get('submitted_offer_letter'):
             raise serializers.ValidationError('Signed Offer letter is required')
+        
         return super().validate(attrs)
 
 def get_pdf(file, request):
