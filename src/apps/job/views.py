@@ -36,8 +36,6 @@ from .filters import (
 
 
 class OfferLetterTemplateViewSet(ModelViewSet):
-    permission_classes = []
-    authentication_classes = []
     queryset = OfferTemplate.objects.all()
     serializer_class = OfferLetterTemplateSerializer
     filterset_class = OfferLetterFilterSet
@@ -48,10 +46,7 @@ class OfferLetterTemplateViewSet(ModelViewSet):
             return OfferTemplate.objects.get(pk=pk)
         except OfferTemplate.DoesNotExist:
             raise exceptions.NotFound("Offer letter not found")
-        
    
-    
-
 
 @extend_schema(
     request=OfferLetterRequestSerializer,

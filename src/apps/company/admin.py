@@ -10,7 +10,6 @@ class CompanyAdmin(admin.ModelAdmin):
 
 @admin.register(Address)
 class AddressAdmin(admin.ModelAdmin):
-    list_display = ["street","city","state","zip_code"]
+    list_display = ["street","city","state"]
     search_fields = ["street","city"]
     list_filter = ["state"]
-    ordering = ["created_at"]
