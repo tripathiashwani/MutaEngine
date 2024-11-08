@@ -39,7 +39,7 @@ class CustomUserManager(BaseUserManager):
 class User(BaseModel, AbstractUser):
     username = None
     email = models.EmailField(_("email address"), unique=True)
-    phone = models.CharField(max_length=17, null=False, blank=False)
+    phone = models.CharField(max_length=17, null=True, blank=True)
     image = models.ImageField(
         upload_to=get_upload_folder, validators=[image_validate], null=True, blank=True
     )
