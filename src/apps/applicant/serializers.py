@@ -122,7 +122,7 @@ class AssignmentSubmissionsSerializer(serializers.ModelSerializer):
         applicant_id=validated_data.get('applicant_id')
         
         try:
-            application=JobApplicant.objects.get(id=applicant_id)
+            application=JobApplicant.objects.get(application_id=applicant_id)
         except JobApplicant.DoesNotExist:
             raise serializers.ValidationError("Application not found")
         
