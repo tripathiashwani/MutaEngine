@@ -49,7 +49,7 @@ class JobApplicantExtraField(BaseModel):
 class AssignmentSubmission(BaseModel):
     first_name = models.CharField(max_length=255, null=False, blank=False)
     last_name = models.CharField(max_length=255, null=False, blank=False)
-    applicant_id = models.UUIDField()
+    applicant_id = models.CharField(max_length=255, null=True, blank=False)
     deployment_url = models.URLField()
     project_github_url = models.URLField()
     video_url = models.URLField()
