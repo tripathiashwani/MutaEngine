@@ -61,14 +61,25 @@ class UserLogoutSerializer(serializers.Serializer):
 
 
 class UserUpdateSerializer(serializers.ModelSerializer):
+    role_id = serializers.IntegerField(required=False)
 
     class Meta:
         model = User
         fields = "__all__"
 
     def update(self, instance, validated_data):
+        role_id = validated_data.pop("role_id")
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
+
+
+        try:
+            role = Group.objects.get(id=role_id)
+            instance.groups.clear()
+            instance.groups.add(role)
+
+        except Group.DoesNotExist:
+            raise serializers.ValidationError({"msg": "Invalid role id"})
 
         instance.save()
         return instance

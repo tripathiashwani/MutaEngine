@@ -63,10 +63,10 @@ class SubmitSignedOfferLetterView(generics.GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         
         serializer.is_valid(raise_exception=True)
-        job_applicant_id = serializer.validated_data.get("application_id", None)
+        application_id = serializer.validated_data.get("application_id", None)
 
         try:
-            job_applicant = JobApplicant.objects.get(application_id=job_applicant_id)
+            job_applicant = JobApplicant.objects.get(application_id=application_id)
             job_applicant.offer_letter_signed = True
         except JobApplicant.DoesNotExist:
             raise exceptions.NotFound("Job applicant not found")
