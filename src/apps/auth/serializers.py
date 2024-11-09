@@ -68,18 +68,18 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def update(self, instance, validated_data):
-        role_id = validated_data.pop("role_id")
+        role_id = validated_data.pop("role_id",None)
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
 
+        if role_id:
+            try:
+                role = Group.objects.get(id=role_id)
+                instance.groups.clear()
+                instance.groups.add(role)
 
-        try:
-            role = Group.objects.get(id=role_id)
-            instance.groups.clear()
-            instance.groups.add(role)
-
-        except Group.DoesNotExist:
-            raise serializers.ValidationError({"msg": "Invalid role id"})
+            except Group.DoesNotExist:
+                raise serializers.ValidationError({"msg": "Invalid role id"})
 
         instance.save()
         return instance
