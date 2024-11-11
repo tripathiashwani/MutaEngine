@@ -136,10 +136,15 @@ class AssignmentSubmissionsSerializer(serializers.ModelSerializer):
 
         
         assignment_submission = AssignmentSubmission.objects.create(**validated_data)
+
+        company = Company.objects.all()
+        if company:
+            company_name=company.first().name # type: ignore
+        else:
+            company_name="Mutaengine"
         
         application.assignment_submitted=True
         role=str(application.job_template.title)
-        company_name="Mutaengine"
         applicant_name = f"{application.first_name} {application.last_name}"
         to_email = str(application.email)
         html_template_relative_path = None
@@ -222,6 +227,9 @@ def get_pdf(file, request):
         applicant = JobApplicant.objects.get(id=applicant_id)
         applicant_name = f"{applicant.first_name} {applicant.last_name}"
         company_name = "Mutaengine"
+
+
+        
         
         # Get other data from the request
         placeholders = {
