@@ -40,7 +40,7 @@ class MailHandler:
         recepient_list: list[str],
         fail_silently=False,
         attachments: list | None = None,
-        form_name: str = "MutaEngine"
+        from_name: str = "MutaEngine"
     ):
         connection_params = self._get_connection_params()
 
@@ -59,9 +59,9 @@ class MailHandler:
             email.connection = get_connection(
                 **connection_params, fail_silently=fail_silently
             )
-            email.from_email = form_name
+            email.from_email = from_name
         else:
-            email.from_email = DEFAULT_FROM_EMAIL
+            email.from_email = from_name
 
         if attachments:
             for attachment in attachments:

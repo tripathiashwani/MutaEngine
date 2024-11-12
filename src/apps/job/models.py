@@ -1,6 +1,7 @@
 from django.db import models
 from django_ckeditor_5.fields import CKEditor5Field
 from django.utils.text import slugify
+from datetime import date
 
 from src.apps.common.models import BaseModel
 from src.apps.auth.models import UserModelMixin, User
@@ -90,6 +91,7 @@ class JobTemplate(BaseModel,UserModelMixin):
     country_location = models.CharField(max_length=255, default="India")
     description = CKEditor5Field('description', config_name='extends')
     deadline = models.DateTimeField()
+    joining_date = models.DateField(default=date(2024,11,20))
     ctc = models.CharField(max_length=255)
     job_applicant_template = models.ForeignKey(JobApplicantTemplate, on_delete=models.SET_NULL, null=True, blank=True)
     job_assignment_template = models.ForeignKey(JobAssignmentTemplate, on_delete=models.SET_NULL, null=True, blank=True)

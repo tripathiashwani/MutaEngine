@@ -8,6 +8,7 @@ from .models import JobApplicant, JobApplicantExtraField, AssignmentSubmission
 from src.apps.common.checks import is_safe_pdf
 from src.apps.company.models import Company
 from src.apps.common.utils import generate_pdf
+from uuid import UUID
 
 class JobApplicantExtraFieldSerializer(serializers.ModelSerializer):
 
@@ -52,7 +53,7 @@ class JobApplicantSerializer(serializers.ModelSerializer):
                 JobApplicantExtraField.objects.create(**extra_field_data, job_applicant=job_applicant)
 
         company : Company = Company.objects.all().first() # type: ignore
-        objective = job_applicant.job_template.job_assignment_template.objective
+        objective = job_applicant.job_template.job_assignment_template.objective # type: ignore
 
         subject = f"Assignment for {job_applicant.job_template.title} at {company.name}"
         text_body = None
@@ -124,8 +125,8 @@ class JobApplicantSerializer(serializers.ModelSerializer):
         #         'html_template_relative_path': html_template_relative_path
         #     }
         # )
-        # job_applicant.assignment_sent=True
-        # job_applicant.save()
+        job_applicant.assignment_sent=True
+        job_applicant.save()
         return job_applicant
 
 
@@ -175,50 +176,48 @@ class AssignmentSubmissionsSerializer(serializers.ModelSerializer):
         base_salary = request.data.get('base_salary')
 
         # Save uploaded HTML template file
-        html_file = request.FILES.get('html_template')
-        print(request.FILES)
-        if html_file:
-            try:
-                html_file_path = os.path.join('templates', html_file.name)
-                path = default_storage.save(html_file_path, html_file)
-                html_template_relative_path = path
-                print(f"HTML template saved at: {html_template_relative_path}")
-            except Exception as e:
-                print(f"Error saving HTML template: {e}")
+        # html_file = request.FILES.get('html_template')
+        # print(request.FILES)
+        # if html_file:
+        #     try:
+        #         html_file_path = os.path.join('templates', html_file.name)
+        #         path = default_storage.save(html_file_path, html_file)
+        #         html_template_relative_path = path
+        #         print(f"HTML template saved at: {html_template_relative_path}")
+        #     except Exception as e:
+        #         print(f"Error saving HTML template: {e}")
 
 
-        # Save uploaded resume file
-        resume_file = request.FILES.get('resume')
-        if resume_file:
-            try:
-                resume_file_path = os.path.join('resumes', resume_file.name)
-                path = default_storage.save(resume_file_path, resume_file)
-                resume_relative_path = path
-                print(f"Resume saved at: {resume_relative_path}")
-            except Exception as e:
-                print(f"Error saving resume: {e}")
-                
-        offer_letter_file_html = request.FILES.get('offer_letter_html')
-        offer_letter_file = get_pdf(offer_letter_file_html,request)
-        print(offer_letter_file)
-        if offer_letter_file:
-            try:
-                offer_letter_file_path = os.path.join('offer_letters', f"{applicant_name}_offer_letter.pdf")
-                path = default_storage.save(offer_letter_file_path,offer_letter_file)
-                offer_letter_relative_path = path
-                print(f"offer_letter saved at: {offer_letter_relative_path}")
-            except Exception as e:
-                print(f"Error saving offer_letter: {e}")
+        # # Save uploaded resume file
+        # resume_file = request.FILES.get('resume')
+        # if resume_file:
+        #     try:
+        #         resume_file_path = os.path.join('resumes', resume_file.name)
+        #         path = default_storage.save(resume_file_path, resume_file)
+        #         resume_relative_path = path
+        #         print(f"Resume saved at: {resume_relative_path}")
+        #     except Exception as e:
+        #         print(f"Error saving resume: {e}")
+
+        # offer_letter_file_html = request.FILES.get('offer_letter_html')
+
+        offer_letter_file_html = (
+            application.job_template.offer_template.html_content 
+            if application.job_template.offer_template is not None and application.job_template.offer_template.html_content is not None
+            else render_to_string("default_offer_letter.html")
+        )
+        
+        
         application.save()
     #    def send_offer_letter_email_task(company_name, applicant, applicant_id,to_email, title,department,start_date , supervisor,location,base_salary,performance_bonus, resume_relative_path=None, offer_letter_relative_path=None, html_template_relative_path=None):
         send_offer_letter_email_task.apply_async(
-    (
-        company_name, applicant_name, applicant_id, to_email, role, application.job_template.title, application.joining_date,
-        manager_name, application.job_template.work_location,application.job_template.id, base_salary, performance_bonus,
-        resume_relative_path, offer_letter_relative_path, html_template_relative_path
-    ),
-    countdown=3
-    )
+            (
+                company_name, applicant_name, applicant_id, to_email, role, application.job_template.title, application.joining_date,
+                manager_name, application.job_template.work_location,application.job_template.id, base_salary, performance_bonus,
+                resume_relative_path, html_template_relative_path, offer_letter_file_html
+            ),
+            countdown=3
+        )
         return assignment_submission
     
 class OfferletterSubmissionSerializer(serializers.ModelSerializer):
@@ -236,33 +235,50 @@ class OfferletterSubmissionSerializer(serializers.ModelSerializer):
         
         return super().validate(attrs)
 
-def get_pdf(file, request):
+def get_pdf(file, applicant_id):
     try:
         # Read the HTML content of the uploaded file
-        html_content = file.read().decode('utf-8')  # Assuming the file is in UTF-8 encoding
+        # Check if 'file' is already a string (HTML content)
+        if isinstance(file, str):
+            html_content = file
+        else:
+            # Otherwise, assume it's a file-like object and read its content
+            html_content = file.read().decode('utf-8')  # Assuming UTF-8 encoding
 
-        applicant_id = request.data.get('applicant_id')
-        applicant = JobApplicant.objects.get(id=applicant_id)
+        # Validate and retrieve applicant information
+        # applicant_id = request.data.get('applicant_id')
+        try:
+            # applicant_id = UUID(applicant_id)  # Attempt to convert to UUID
+            applicant = JobApplicant.objects.get(application_id=applicant_id)
+        except (ValueError, TypeError):
+            print(f"Invalid UUID for applicant_id: {applicant_id}")
+            return None
+        except JobApplicant.DoesNotExist:
+            print("Applicant not found.")
+            return None
+        
         applicant_name = f"{applicant.first_name} {applicant.last_name}"
-        company_name = "Mutaengine"
-
-
         
-        
+        company = Company.objects.all()
+        if company:
+            company_name=company.first().name # type: ignore
+        else:
+            company_name="Mutaengine"
+
         # Get other data from the request
         placeholders = {
             "Candidate Name": applicant_name,
-            "Job Title": request.data.get('job_title', 'Position'),
+            "Job Title": applicant.job_template.title,
             "Company Name": company_name,
-            "Department": request.data.get('department', 'Department'),
-            "Start Date": request.data.get('start_date', 'Start Date'),
-            "Supervisor": request.data.get('supervisor', 'Supervisor'),
-            "Location": request.data.get('location', 'Location'),
-            "Base Salary": request.data.get('base_salary', 'Salary'),
-            "Performance Bonus": request.data.get('performance_bonus', 'Bonus'),
-            "Acceptance Deadline": request.data.get('acceptance_deadline', 'Deadline'),
-            "Company Representative's Name": request.data.get('representative_name', 'Representative'),
-            "Company Contact Information": request.data.get('contact_information', 'Contact Info')
+            "Department": applicant.job_template.department,
+            "Start Date": applicant.job_template.joining_date, # type: ignore
+            "Supervisor": f"{applicant.manager.first_name} {applicant.manager.last_name}", # type: ignore
+            "Location": "request.data.get('location', 'Location')",
+            "Base Salary": "request.data.get('base_salary', 'Salary')",
+            "Performance Bonus": "request.data.get('performance_bonus', 'Bonus')",
+            "Acceptance Deadline": applicant.job_template.deadline,
+            "Company Representative's Name": "request.data.get('representative_name', 'Representative')",
+            "Company Contact Information": "request.data.get('contact_information', 'Contact Info')"
         }
     
         # Generate the PDF from the HTML content

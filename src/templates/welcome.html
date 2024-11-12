@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
 {% block content %}
   <div style="padding: 20px;">
-    <h2 style="color: #333;">Welcome to the Team, (Candidate's Name)!</h2>
-    <p>Dear (Candidate's Name),</p>
-    <p>I wanted to take a moment to personally welcome you to the MutaEngine team!</p>
-    <p>I'm (Manager's Name), your team manager, and I'm thrilled to have you join us as our new Senior Backend Engineer. We have some exciting projects ahead, and I'm confident that your expertise will make a big impact on our team's success.</p>
+    <h2 style="color: #333;">Welcome to the Team, {{ applicant.first_name }} {{applicant.last_name }}!</h2>
+    <p>Dear {{ applicant.first_name }} {{applicant.last_name }},</p>
+    <p>I wanted to take a moment to personally welcome you to the {{ company.name }} team!</p>
+    <p>I'm {{ applicant.manager.first_name }} {{ applicant.manager.last_name }}, your team manager, and I'm thrilled to have you join us as our new {{ applicant.job_template.title }}. We have some exciting projects ahead, and I'm confident that your expertise will make a big impact on our team's success.</p>
     <p>In the next few days, we'll schedule a team meeting to introduce you to everyone and walk you through the ongoing projects. You will also receive a detailed onboarding plan to get you up to speed.</p>
     <p>If there's anything you may need before your official start date or any questions you may have, feel free to reach out to me directly. We are all looking forward to collaborating with you!</p>
     <p>Once again, welcome to the team. We are excited to have you on board!</p>
     <p>Best Regards,</p>
-    <p>Naltik Singh</p>
-    <p>Hiring Manager @MutaEngine</p>
+    <p>{{ applicant.manager.first_name }} {{ applicant.manager.last_name }}</p>
+    <p>Hiring Manager @{{ company.name }}</p>
   </div>
 {% endblock %}

@@ -12,11 +12,11 @@ from .serializers import (
 )
 from .models import JobApplicant, AssignmentSubmission
 from src.apps.company.models import Company
-from .tasks import send_confirmation_email_task
+from .tasks import send_confirmation_email_task, send_mail_task
 from django.core.files.storage import default_storage
 from rest_framework.response import Response
 from rest_framework import status
-
+from django.template.loader import render_to_string
 from src.apps.job.models import JobTemplate
 
 
@@ -73,7 +73,30 @@ class SubmitSignedOfferLetterView(generics.GenericAPIView):
         
         job_applicant.submitted_offer_letter = serializer.validated_data.get("submitted_offer_letter",None)
         job_applicant.save()
-        handle_mailer_task(request, job_applicant)
+
+        company : Company = Company.objects.all().first() # type: ignore
+
+        subject = f"Offer Acceptance Confirmation for {job_applicant.job_template.title} at {company.name}"
+        text_body = None
+        html_body = render_to_string('offer_letter_recieved.html', {'company':company, 'applicant': job_applicant})
+        recepient_list = [job_applicant.email]
+
+        send_mail_task.apply_async(
+            args=[subject, text_body, html_body, recepient_list, None, company.name],
+            countdown=3,
+        )
+
+        subject = f"Offer Acceptance Confirmation for {job_applicant.job_template.title} at {company.name}"
+        text_body = None
+        html_body = render_to_string('welcome.html', {'company':company, 'applicant': job_applicant})
+
+
+        send_mail_task.apply_async(
+            args=[subject, text_body, html_body, recepient_list, None, company.name],
+            countdown=15,
+        )
+
+        # handle_mailer_task(request, job_applicant)
         
         return Response({"msg":"Submitted successfully"}, status=status.HTTP_200_OK)
 
