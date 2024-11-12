@@ -4,6 +4,7 @@ import os
 from django.core.files.storage import default_storage
 from django.conf import settings
 from django.template.loader import render_to_string
+from django.template import Template, Context
 from .models import JobApplicant, JobApplicantExtraField, AssignmentSubmission
 from src.apps.common.checks import is_safe_pdf
 from src.apps.company.models import Company
@@ -201,11 +202,46 @@ class AssignmentSubmissionsSerializer(serializers.ModelSerializer):
 
         # offer_letter_file_html = request.FILES.get('offer_letter_html')
 
-        offer_letter_file_html = (
-            application.job_template.offer_template.html_content 
-            if application.job_template.offer_template is not None and application.job_template.offer_template.html_content is not None
-            else render_to_string("default_offer_letter.html")
-        )
+        context_data = {
+            "applicant_name": applicant_name,
+            "Job Title": application.job_template.title,
+            "Company Name": company_name,
+            "Department": application.job_template.department,
+            "Start Date": application.job_template.joining_date,  # type: ignore
+            "Supervisor": f"{application.manager.first_name} {application.manager.last_name}",  # type: ignore
+            "Location": request.data.get('location', 'Location'),
+            "Base Salary": request.data.get('base_salary', 'Salary'),
+            "Performance Bonus": request.data.get('performance_bonus', 'Bonus'),
+            "Acceptance Deadline": application.job_template.deadline,
+            "Company Representative's Name": request.data.get('representative_name', 'Representative'),
+            "Company Contact Information": request.data.get('contact_information', 'Contact Info'),
+        }
+
+        # Check if custom HTML content is provided
+        if application.job_template.offer_template and application.job_template.offer_template.html_content:
+             # Read content from the FieldFile object
+            html_content = application.job_template.offer_template.html_content.read().decode('utf-8')
+            # Render the file content as a template
+            offer_letter_file = Template(html_content).render(Context(context_data))
+
+        else:
+            # Render the default template file
+            offer_letter_file = render_to_string("default_offer_letter.html", context_data)
+
+        # offer_letter_file = render_to_string(str(offer_letter_file_html),{
+        #     "applicant_name": applicant_name,
+        #     "Job itle": application.job_template.title,
+        #     "Company Name": company_name,
+        #     "Department": application.job_template.department,
+        #     "Start Date": application.job_template.joining_date, # type: ignore
+        #     "Supervisor": f"{application.manager.first_name} {application.manager.last_name}", # type: ignore
+        #     "Location": "request.data.get('location', 'Location')",
+        #     "Base Salary": "request.data.get('base_salary', 'Salary')",
+        #     "Performance Bonus": "request.data.get('performance_bonus', 'Bonus')",
+        #     "Acceptance Deadline": application.job_template.deadline,
+        #     "Company Representative's Name": "request.data.get('representative_name', 'Representative')",
+        #     "Company Contact Information": "request.data.get('contact_information', 'Contact Info')"
+        # })
         
         
         application.save()
@@ -214,7 +250,7 @@ class AssignmentSubmissionsSerializer(serializers.ModelSerializer):
             (
                 company_name, applicant_name, applicant_id, to_email, role, application.job_template.title, application.joining_date,
                 manager_name, application.job_template.work_location,application.job_template.id, base_salary, performance_bonus,
-                resume_relative_path, html_template_relative_path, offer_letter_file_html
+                resume_relative_path, html_template_relative_path, offer_letter_file
             ),
             countdown=3
         )

@@ -49,7 +49,7 @@ class OfferTemplate(BaseModel):
     content = CKEditor5Field('content', config_name='extends',null=True, blank=True)
     manager=models.ForeignKey(User, on_delete=models.CASCADE, related_name='offer_templates',null=True, blank=True)
     joining_date = models.DateField(blank=True,null=True )  
-    html_content = models.TextField(null=True, blank=True)
+    html_content = models.FileField(null=True)
 
 
     def __str__(self):
