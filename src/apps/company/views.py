@@ -8,7 +8,8 @@ from drf_spectacular.utils import extend_schema, OpenApiExample
 from drf_spectacular.types import OpenApiTypes
 
 class CompanyDetailUpdateView(APIView):
-    permission_classes = [IsAdminUser]
+    permission_classes = []
+    authentication_classes = []
 
     @extend_schema(
         request=OpenApiTypes.OBJECT,
