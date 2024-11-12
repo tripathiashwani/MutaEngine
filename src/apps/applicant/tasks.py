@@ -6,8 +6,16 @@ from src.apps.mail.mailers.otp_mailer import send_otp_mail
 from src.apps.mail.mailers.password_credentials_mailer import password_credentials_mailer
 from src.apps.mail.mailers.welcome_mailer import send_welcome_email
 from src.apps.mail.mailers.offer_letter_mailer import send_offer_letter
+from src.apps.mail.handlers import MailHandler
 from django.utils import timezone
 import os
+
+
+@shared_task
+def send_mail_task(subject, text_body, html_body, recepient_list, attachments, form_name):
+    mail_handler = MailHandler()
+    mail_handler.send(subject, text_body, html_body, recepient_list, attachments, form_name)
+
 
 # send_assignment(company_name, applicant, to_email, role, last_date, assignment_detail_link, application_id, resume_path=None, html_template_path=None)
 @shared_task

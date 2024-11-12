@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assignment Email</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f5;">
+
+  <table align="center" style="width: 100%; background-color: #f4f4f5; padding: 20px;">
+    <tr>
+      <td align="center">
+        <table style="max-width: 600px; width: 100%; background-color: #ffffff; border-radius: 8px; overflow: hidden;">
+          <tr>
+            <td style="padding: 40px 20px; text-align: center; background-color: #ffffff;">
+              <img src="{{ company.logo.url }}" alt="MutaEngine Logo" style="display: block; margin: 0 auto;">
+              <a href="{{ company.linkedin }}"></a><img src="https://via.placeholder.com/20" alt="LinkedIn Icon" style="display: inline-block; float: right;">
+            </td>
+          </tr>
+          {% block content %} {% endblock %}
+          <tr>
+            <td style="padding: 20px; text-align: center; background-color: #f4f4f5;">
+              <a href="#"><img src="https://via.placeholder.com/20" alt="LinkedIn Icon" style="vertical-align: middle;"></a>
+              <p style="color: #777; font-size: 12px; margin-top: 10px;">
+                © 2024 {{ company.name }}. All rights reserved.
+              </p>
+              <p style="color: #777; font-size: 12px;">
+                <a href="{{ company.linkedin }}" style="color: #007bff; text-decoration: none;">Follow us on LinkedIn</a> | 
+                <a href="#" style="color: #007bff; text-decoration: none;">Privacy Policy</a> |
+                <a href="#" style="color: #007bff; text-decoration: none;">Terms of Service</a> |
+                <a href="#" style="color: #007bff; text-decoration: none;">Contact Us</a> |
+                <a href="#" style="color: #007bff; text-decoration: none;">Website URL</a>
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>

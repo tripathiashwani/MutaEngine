@@ -1,3 +1,4 @@
+from pathlib import Path
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives, get_connection
 
@@ -39,6 +40,7 @@ class MailHandler:
         recepient_list: list[str],
         fail_silently=False,
         attachments: list | None = None,
+        form_name: str = "MutaEngine"
     ):
         connection_params = self._get_connection_params()
 
@@ -57,13 +59,17 @@ class MailHandler:
             email.connection = get_connection(
                 **connection_params, fail_silently=fail_silently
             )
-            email.from_email = f"{from_name} < {connection_params['username']}>"
+            email.from_email = form_name
         else:
             email.from_email = DEFAULT_FROM_EMAIL
 
         if attachments:
             for attachment in attachments:
-                email.attach_file(attachment)
+                if attachment and Path(attachment).exists():
+                    email.attach_file(attachment)
+                else:
+                    print(f"File not found or invalid path: {attachment}")
+
 
         try:
             email.send()

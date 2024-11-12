@@ -1,8 +1,9 @@
 from rest_framework import serializers
-from .tasks import send_assignment_email_task , send_offer_letter_email_task
+from .tasks import send_assignment_email_task , send_offer_letter_email_task, send_mail_task
 import os
 from django.core.files.storage import default_storage
 from django.conf import settings
+from django.template.loader import render_to_string
 from .models import JobApplicant, JobApplicantExtraField, AssignmentSubmission
 from src.apps.common.checks import is_safe_pdf
 from src.apps.company.models import Company
@@ -13,8 +14,6 @@ class JobApplicantExtraFieldSerializer(serializers.ModelSerializer):
     class Meta:
         model = JobApplicantExtraField
         exclude = ["job_applicant"]
-
-
 
 
 class JobApplicantSerializer(serializers.ModelSerializer):
@@ -52,23 +51,42 @@ class JobApplicantSerializer(serializers.ModelSerializer):
             for extra_field_data in extra_fields_data:
                 JobApplicantExtraField.objects.create(**extra_field_data, job_applicant=job_applicant)
 
-        
-        
+        company : Company = Company.objects.all().first() # type: ignore
+        objective = job_applicant.job_template.job_assignment_template.objective
+
+        subject = f"Assignment for {job_applicant.job_template.title} at {company.name}"
+        text_body = None
+        html_body = render_to_string(
+            'application.html', 
+            {
+                'company': company.name,
+                'applicant': job_applicant,
+                'objective': objective,
+            }
+        )
+        recepient_list = [job_applicant.email]
+        # attachments = None
+
+        send_mail_task.apply_async(
+            args=[subject, text_body, html_body, recepient_list, None, company.name],
+            countdown=3,
+        )
+
         # company_name = Company.objects.all().first().name
-        company_name="Mutaengine"
-        applicant_name = f"{job_applicant.first_name} {job_applicant.last_name}"
-        to_email = job_applicant.email
-        role = str(job_applicant.job_template.title ) 
-        last_date = job_applicant.job_template.deadline 
-        # assignment_detail_link = f"https://career.mutaengine.cloud/career/{job_applicant.job_template.pk}/submit-assignment-form"
-        # assignment_detail_link = f"https://career.mutaengine.cloud/career/{job_applicant.job_template.job_assignment_template.id}/assignment-details"
-        assignment_detail_link = f"https://career.mutaengine.cloud/career/{job_applicant.job_template.id}/assignment-details"
-        assignment_detail=request.data.get('assignment_detail')
-        application_id = str(job_applicant.application_id)
-         # Initialize paths
-        html_template_relative_path = None
-        resume_relative_path = None
-        assignment_objective=job_applicant.job_template.job_assignment_template.objective
+        # company_name="Mutaengine"
+        # applicant_name = f"{job_applicant.first_name} {job_applicant.last_name}"
+        # to_email = job_applicant.email
+        # role = str(job_applicant.job_template.title ) 
+        # last_date = job_applicant.job_template.deadline 
+        # # assignment_detail_link = f"https://career.mutaengine.cloud/career/{job_applicant.job_template.pk}/submit-assignment-form"
+        # # assignment_detail_link = f"https://career.mutaengine.cloud/career/{job_applicant.job_template.job_assignment_template.id}/assignment-details"
+        # assignment_detail_link = f"https://career.mutaengine.cloud/career/{job_applicant.job_template.id}/assignment-details"
+        # assignment_detail=request.data.get('assignment_detail')
+        # application_id = str(job_applicant.application_id)
+        #  # Initialize paths
+        # html_template_relative_path = None
+        # resume_relative_path = None
+        # assignment_objective=job_applicant.job_template.job_assignment_template.objective
 
         # Save uploaded HTML template file
         html_file = request.FILES.get('html_template')
@@ -97,17 +115,17 @@ class JobApplicantSerializer(serializers.ModelSerializer):
             except Exception as e:
                 print(f"Error saving resume: {e}")
 
-        # Pass relative paths to the Celery task
-        send_assignment_email_task.apply_async(
-            (str(company_name), applicant_name, to_email, role, last_date, assignment_detail_link, assignment_detail, application_id,assignment_objective),
-            countdown=3,
-            kwargs={
-                'resume_relative_path': resume_relative_path,
-                'html_template_relative_path': html_template_relative_path
-            }
-        )
-        job_applicant.assignment_sent=True
-        job_applicant.save()
+        # # Pass relative paths to the Celery task
+        # send_assignment_email_task.apply_async(
+        #     (str(company_name), applicant_name, to_email, role, last_date, assignment_detail_link, assignment_detail, application_id,assignment_objective),
+        #     countdown=3,
+        #     kwargs={
+        #         'resume_relative_path': resume_relative_path,
+        #         'html_template_relative_path': html_template_relative_path
+        #     }
+        # )
+        # job_applicant.assignment_sent=True
+        # job_applicant.save()
         return job_applicant
 
 
