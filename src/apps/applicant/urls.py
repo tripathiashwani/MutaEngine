@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import JobApplicantViewSet, AssignmentSubmissionViewSet, SubmitSignedOfferLetterView, TilesDataView
+from .views import JobApplicantViewSet, AssignmentSubmissionViewSet, SubmitSignedOfferLetterView, TilesDataView, TemplateTestView
 
 
 urlpatterns = [
@@ -22,4 +22,5 @@ urlpatterns = [
         name="submit-signed-offer-letter-view"
     ),
     path("tiles/", TilesDataView.as_view(), name="tiles-data-view"),
+    path("test/template/", TemplateTestView.as_view(), name="template-test")
 ]
