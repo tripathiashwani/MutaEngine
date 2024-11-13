@@ -174,7 +174,7 @@ class AssignmentSubmissionsSerializer(serializers.ModelSerializer):
         offer_letter_relative_path = None
         request = self.context['request']
         offer_details = request.data.get('offer_details')
-        manager_name = f"{application.manager.first_name} {application.manager.last_name}" # type: ignore
+        manager_name = f"{application.job_template.user.first_name} {application.job_template.user.last_name}" # type: ignore
         performance_bonus = request.data.get('performance_bonus')
         base_salary = request.data.get('base_salary')
 
@@ -315,7 +315,7 @@ def get_pdf(file, applicant_id):
             "Company Name": company_name,
             "Department": applicant.job_template.department,
             "Start Date": applicant.job_template.joining_date, # type: ignore
-            "Supervisor": f"{applicant.manager.first_name} {applicant.manager.last_name}", # type: ignore
+            "Supervisor": f"{applicant.job_template.user.first_name} {applicant.job_template.user.last_name}", # type: ignore
             "Location": "request.data.get('location', 'Location')",
             "Base Salary": "request.data.get('base_salary', 'Salary')",
             "Performance Bonus": "request.data.get('performance_bonus', 'Bonus')",
