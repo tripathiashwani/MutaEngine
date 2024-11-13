@@ -160,6 +160,8 @@ class AssignmentSubmissionsSerializer(serializers.ModelSerializer):
         company = Company.objects.all()
         if company:
             company_name=company.first().name # type: ignore
+            company_logo = company.first().logo.url # type: ignore
+            comapny_linkedin_url = company.first().linkedin # type: ignore
         else:
             company_name="Mutaengine"
         
@@ -248,7 +250,7 @@ class AssignmentSubmissionsSerializer(serializers.ModelSerializer):
     #    def send_offer_letter_email_task(company_name, applicant, applicant_id,to_email, title,department,start_date , supervisor,location,base_salary,performance_bonus, resume_relative_path=None, offer_letter_relative_path=None, html_template_relative_path=None):
         send_offer_letter_email_task.apply_async(
             (
-                company_name, applicant_name, applicant_id, to_email, role, application.job_template.title, application.joining_date,
+                company_name, company_logo, comapny_linkedin_url,applicant_name, applicant_id, to_email, role, application.job_template.title, application.job_template.joining_date,
                 manager_name, application.job_template.work_location,application.job_template.id, base_salary, performance_bonus,
                 resume_relative_path, html_template_relative_path, offer_letter_file
             ),

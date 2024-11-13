@@ -16,31 +16,90 @@ smtp_server = settings.EMAIL_HOST
 smtp_port = settings.EMAIL_PORT
 
 
-def send_offer_letter(company_name, applicant, applicant_id, to_email,role, department,start_date , supervisor,location,job_template_id,base_salary,performance_bonus, resume_path=None, offer_letter_path=None, html_template_path=None):
+def send_offer_letter(company_name, company_logo, comapny_linkedin_url,applicant, applicant_id, to_email,role, department,start_date , supervisor,location,job_template_id,base_salary,performance_bonus, resume_path=None, offer_letter_path=None, html_template_path=None):
     print(html_template_path,"html_template_path in mailer")
     subject = f"Offer Letter for {role} at {company_name}"
     
     # Default body if no HTML file is provided
-    default_body = f"""
-    Dear {applicant},<br><br>
-    
-    We are pleased to extend an offer for the <strong>{role}</strong> position at <strong>{company_name}</strong>! Below are the details of your offer:<br><br>
-    {f'<strong>Base Salary:</strong><br>{base_salary}<br><br>' if base_salary else ''}
-    {f'<strong>Performance Bonus:</strong><br>{performance_bonus}<br><br>' if performance_bonus else ''}
-    
+    default_body = f'''
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignment Email</title>
+    </head>
+    <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f5;">
 
-    
-    <strong><a href="{f"https://career.mutaengine.cloud/career/{job_template_id}/offer-letter-signed-form"}" target="_blank">Submit Signed offer letter</a><strong>
-    
-    We are excited to have you on board and look forward to your acceptance.<br><br>
-    
-    If you have any questions, feel free to reach out to us.<br><br>
-    
-    Best regards,<br>
-    <strong>{supervisor}</strong><br>
-    Hiring Manager at {company_name}<br>
-    {company_email}<br>
-    """
+    <table align="center" style="width: 100%; background-color: #f4f4f5; padding: 20px;">
+        <tr>
+        <td align="center">
+            <table style="max-width: 600px; width: 100%; background-color: #ffffff; border-radius: 8px; overflow: hidden;">
+            <tr>
+                <td style="padding: 40px 20px; text-align: center; background-color: #ffffff;">
+                <img src="{ company_logo }" alt="MutaEngine Logo" style="display: block; margin: 0 auto;">
+                <a href="{ comapny_linkedin_url }"></a><img src="https://via.placeholder.com/20" alt="LinkedIn Icon" style="display: inline-block; float: right;">
+                </td>
+            </tr>
+
+            <tr>
+        <td style="padding: 20px; text-align: left; color: #333;">
+        <p style="font-size: 18px;"><strong>Subject:</strong> Congratulations! Offer of employment at {company_name}e.</p>
+        <p>Dear <strong>{applicant}</strong>,</p>
+        <p>I hope this email finds you well.</p>
+        <p>
+            We are pleased to inform you that after careful consideration, we are delighted to offer you the position of <strong>{role}</strong> at MutaEngine. We were truly impressed with your skills, experience, and problem-solving abilities, and we are excited to have you join our innovative team.
+        </p>
+        <p>
+            Attached to this email, you will find your offer letter, which outlines the terms and conditions of your employment, including your CTC and other relevant details. Kindly review the document thoroughly.
+        </p>
+        <p>
+            To formally accept this offer, please sign the offer letter and upload it through the following link.
+        </p>
+
+        <h3 style="color: #333; font-size: 16px; margin-top: 20px;">Submit Signed Offer Letter here :</h3>
+        <p><a href="https://career.mutaengine.cloud/career/{job_template_id}/offer-letter-signed-form" style="color: #007bff; text-decoration: none;">https://career.mutaengine.cloud/career/{job_template_id}/offer-letter-signed-form</a></p>
+        <p style="text-align: center; margin: 20px 0;">
+            <a href="https://career.mutaengine.cloud/career/{job_template_id}/offer-letter-signed-form" style="text-decoration: none;">
+            <button style="padding: 12px 24px; font-size: 16px; color: #ffffff; background-color: #6200ea; border: none; border-radius: 5px; cursor: pointer;">
+                Submit Signed Offer Letter
+            </button>
+            </a>
+        </p>
+
+        <p>We look forward to receiving your confirmation and welcoming you to the MutaEngine family!</p>
+        <p>If you have any questions or need clarification, feel free to reach out.</p>
+        </td>
+    </tr>
+
+    <tr>
+        <td style="padding: 20px; text-align: left; color: #333; border-top: 1px solid #ddd;">
+        <p>Best Regards,<br>Naitik Singh<br>Hiring Manager <strong>@MutaEngine</strong></p>
+        </td>
+    </tr>
+    <tr>
+            <td style="padding: 20px; text-align: center; background-color: #f4f4f5;">
+              <a href="#"><img src="https://via.placeholder.com/20" alt="LinkedIn Icon" style="vertical-align: middle;"></a>
+              <p style="color: #777; font-size: 12px; margin-top: 10px;">
+                © 2024 { company_name }. All rights reserved.
+              </p>
+              <p style="color: #777; font-size: 12px;">
+                <a href="{ comapny_linkedin_url }" style="color: #007bff; text-decoration: none;">Follow us on LinkedIn</a> | 
+                <a href="#" style="color: #007bff; text-decoration: none;">Privacy Policy</a> |
+                <a href="#" style="color: #007bff; text-decoration: none;">Terms of Service</a> |
+                <a href="#" style="color: #007bff; text-decoration: none;">Contact Us</a> |
+                <a href="#" style="color: #007bff; text-decoration: none;">Website URL</a>
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>
+    '''
 
     # Check if an HTML template path is provided
     if html_template_path and os.path.exists(html_template_path):
@@ -51,13 +110,13 @@ def send_offer_letter(company_name, applicant, applicant_id, to_email,role, depa
 
                 # Replace placeholders in the HTML template
                 replacements = {
-                    '{{ applicant }}': applicant,
-                    '{{ role }}': role or 'N/A',
-                    '{{ company_name }}': company_name or 'N/A',
-                    '{{ manager_name }}': supervisor or 'N/A',
-                    '{{ start_date }}': 'N/A', 
-                    '{{ salary }}': base_salary or 'N/A',
-                    '{{ location }}': 'Remote'  
+                    # '{{ applicant }}': applicant,
+                    # '{{ role }}': role or 'N/A',
+                    # '{{ company_name }}': company_name or 'N/A',
+                    # '{{ manager_name }}': supervisor or 'N/A',
+                    # '{{ start_date }}': 'N/A', 
+                    # '{{ salary }}': base_salary or 'N/A',
+                    # '{{ location }}': 'Remote'  
                 }
 
                 
