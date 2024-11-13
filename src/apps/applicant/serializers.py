@@ -336,3 +336,8 @@ class TilesDataSerializer(serializers.Serializer):
     active_job_post = serializers.IntegerField()
     new_job_applicant = serializers.IntegerField()
     assignment_to_review = serializers.IntegerField()
+
+
+class TemplateTestSerializer(serializers.Serializer):
+    reciever_email = serializers.EmailField(required=True)
+    template = serializers.FileField()

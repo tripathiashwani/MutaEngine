@@ -8,7 +8,8 @@ from .serializers import (
     JobApplicantSerializer, 
     AssignmentSubmissionsSerializer, 
     OfferletterSubmissionSerializer,
-    TilesDataSerializer
+    TilesDataSerializer,
+    TemplateTestSerializer
 )
 from .models import JobApplicant, AssignmentSubmission
 from src.apps.company.models import Company
@@ -18,7 +19,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.template.loader import render_to_string
 from src.apps.job.models import JobTemplate
-
+from src.apps.mail.handlers import MailHandler
 
 class JobApplicantViewSet(ModelViewSet):
     permission_classes = []
@@ -185,3 +186,41 @@ class TilesDataView(generics.GenericAPIView):
         serializer = self.get_serializer(data)
 
         return Response(serializer.data)
+
+class TemplateTestView(generics.GenericAPIView):
+    permission_classes = []
+    authentication_classes = []
+    serializer_class = TemplateTestSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        recipient_email = serializer.validated_data.get("reciever_email")
+        template = serializer.validated_data.get("template")
+
+        # Check if template is an uploaded file
+        if isinstance(template, InMemoryUploadedFile):
+            # Read and decode the file content (assuming it's in utf-8)
+            template_content = template.read().decode('utf-8')
+
+            # Create a Template object using the file content
+            template_obj = Template(template_content)
+
+            # Define the context for rendering the template (empty for now)
+            context = {}
+            html_body = template_obj.render(Context(context))
+        else:
+            # Handle case where no template is provided
+            return Response({"error": "Invalid template"}, status=status.HTTP_400_BAD_REQUEST)
+
+        
+        mail_handler = MailHandler(smtp=None)
+        mail_handler.send(
+            subject="Test Email",
+            text_body="This is a test email",
+            html_body=html_body,
+            recepient_list=[recipient_email],
+        )
+
+        return Response({"msg":"Mail sent successfully"},status=status.HTTP_200_OK)
