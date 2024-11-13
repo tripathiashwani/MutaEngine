@@ -1,38 +1,38 @@
 {% extends 'base.html' %}
 {% block content %}
-  <tr>
-    <td style="padding: 20px; text-align: left; color: #333;">
-      <p style="font-size: 18px;"><strong>Subject:</strong> Congratulations! Offer of employment at MutaEngine.</p>
-      <p>Dear <strong>{Candidate's Name}</strong>,</p>
-      <p>I hope this email finds you well.</p>
-      <p>
-        We are pleased to inform you that after careful consideration, we are delighted to offer you the position of <strong>{Senior Backend Engineer}</strong> at MutaEngine. We were truly impressed with your skills, experience, and problem-solving abilities, and we are excited to have you join our innovative team.
-      </p>
-      <p>
-        Attached to this email, you will find your offer letter, which outlines the terms and conditions of your employment, including your CTC and other relevant details. Kindly review the document thoroughly.
-      </p>
-      <p>
-        To formally accept this offer, please sign the offer letter and upload it through the following link.
-      </p>
+<tr>
+  <td style="padding: 20px; text-align: left; color: #333;">
+  <p style="font-size: 18px;"><strong>Subject:</strong> Congratulations! Offer of employment at {company_name}e.</p>
+  <p>Dear <strong>{applicant}</strong>,</p>
+  <p>I hope this email finds you well.</p>
+  <p>
+      We are pleased to inform you that after careful consideration, we are delighted to offer you the position of <strong>{role}</strong> at MutaEngine. We were truly impressed with your skills, experience, and problem-solving abilities, and we are excited to have you join our innovative team.
+  </p>
+  <p>
+      Attached to this email, you will find your offer letter, which outlines the terms and conditions of your employment, including your CTC and other relevant details. Kindly review the document thoroughly.
+  </p>
+  <p>
+      To formally accept this offer, please sign the offer letter and upload it through the following link.
+  </p>
 
-      <h3 style="color: #333; font-size: 16px; margin-top: 20px;">Submit Signed Offer Letter here :</h3>
-      <p><a href="https://career.mutaengine.cloud/signed_offer_letter/218521-32" style="color: #007bff; text-decoration: none;">https://career.mutaengine.cloud/signed_offer_letter/218521-32</a></p>
-      <p style="text-align: center; margin: 20px 0;">
-        <a href="https://career.mutaengine.cloud/signed_offer_letter/218521-32" style="text-decoration: none;">
-          <button style="padding: 12px 24px; font-size: 16px; color: #ffffff; background-color: #6200ea; border: none; border-radius: 5px; cursor: pointer;">
-            Submit Signed Offer Letter
-          </button>
-        </a>
-      </p>
+  <h3 style="color: #333; font-size: 16px; margin-top: 20px;">Submit Signed Offer Letter here :</h3>
+  <p><a href="https://career.mutaengine.cloud/career/{job_template_id}/offer-letter-signed-form" style="color: #007bff; text-decoration: none;">https://career.mutaengine.cloud/career/{job_template_id}/offer-letter-signed-form</a></p>
+  <p style="text-align: center; margin: 20px 0;">
+      <a href="https://career.mutaengine.cloud/career/{job_template_id}/offer-letter-signed-form" style="text-decoration: none;">
+      <button style="padding: 12px 24px; font-size: 16px; color: #ffffff; background-color: #6200ea; border: none; border-radius: 5px; cursor: pointer;">
+          Submit Signed Offer Letter
+      </button>
+      </a>
+  </p>
 
-      <p>We look forward to receiving your confirmation and welcoming you to the MutaEngine family!</p>
-      <p>If you have any questions or need clarification, feel free to reach out.</p>
-    </td>
-  </tr>
+  <p>We look forward to receiving your confirmation and welcoming you to the {company_name} family!</p>
+  <p>If you have any questions or need clarification, feel free to reach out.</p>
+  </td>
+</tr>
 
-  <tr>
-    <td style="padding: 20px; text-align: left; color: #333; border-top: 1px solid #ddd;">
-      <p>Best Regards,<br>Naitik Singh<br>Hiring Manager <strong>@MutaEngine</strong></p>
-    </td>
-  </tr>
+<tr>
+  <td style="padding: 20px; text-align: left; color: #333; border-top: 1px solid #ddd;">
+  <p>Best Regards,<br>{supervisor}<br>Hiring Manager <strong>@{company_name}</strong></p>
+  </td>
+</tr>
 {% endblock %}

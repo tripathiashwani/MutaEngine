@@ -18,7 +18,7 @@
             flex: 1;
         }
         .logo img {
-            height: 50px; /* Adjust as needed */
+            height: 50px;
         }
         .line-container {
             display: flex;
@@ -28,14 +28,14 @@
         .line-icon {
             width: 20px;
             height: 20px;
-            background-color: #333333; /* Icon background color */
+            background-color: #333333;
             margin-right: 8px;
-            clip-path: polygon(0 0, 100% 50%, 0 100%);
+            clip-path: polygon(100 100, 100% 100%, 0 100%);
         }
         .line {
             flex: 1;
-            height: 4px;
-            background-color: #5b4bc7; /* Line color */
+            height: 8px;
+            background-color: #5b4bc7;
         }
         .contact-info img {
             vertical-align: middle;
@@ -59,7 +59,7 @@
 <div class="header">
     <!-- Logo -->
     <div class="logo">
-        <img src="https://via.placeholder.com/150x50?text=MUTA+ENGINE" alt="MUTA Logo">
+        <img src="{{ company_logo }}" alt="MUTA Logo">
     </div>
 
     <!-- Line with icon -->
@@ -69,7 +69,82 @@
     </div>
 </div>
 
-abcd {{ applicant_name }}
+<div class="container">
+    <div class="">
+        <p>Date: {{ today_day }}</p>
+        <p>Name: {{ applicant_name }}</p>
+        <p>Email: {{ applicant_email}}</p>
+    </div>
+
+    <h1>Dear {{ applicant_name }},</h1>
+
+    <p>We are pleased to offer you the position of <strong>{{ job_title }}</strong> at <strong>{{ company_name }}</strong>. Congratulations on your selection! We are excited to welcome you to our team and look forward to a productive and rewarding experience together. Below are the terms and conditions of your employment. Kindly review and acknowledge them by signing at the end.</p>
+
+    <h2>Terms and Conditions of Employment</h2>
+
+    <h3>Responsibilities</h3>
+    <p>In this role, your primary responsibilities will include:</p>
+    <ul>
+        <li>Contributing actively to the <strong>{{ department }}</strong> to achieve project goals.</li>
+        <li>Collaborating with team members to deliver high-quality solutions.</li>
+        <li>Staying updated with industry trends and best practices.</li>
+        <li>Ensuring completion of tasks within the specified timelines and quality standards.</li>
+        <li>Any additional tasks assigned by the team lead or manager.</li>
+    </ul>
+
+    <h3>Date of Joining</h3>
+    <p>Your start date will be <strong>{{ start_date }}</strong>.</p>
+
+    <h3>Work Arrangements</h3>
+    <p>This position will be <strong>{{ location }}</strong>, based at Noida, India.</p>
+
+    <h3>Leave Policy</h3>
+    <p>For any leave during your internship, please inform Simran, our Founding Member & Project Manager, at least one day in advance via email. Same-day leave requests will only be considered in cases of emergency.</p>
+
+    <h3>Intellectual Property and Confidentiality</h3>
+    <p>All work produced during your employment at MutaEngine Private Limited will remain the intellectual property of the company. You are prohibited from storing, copying, selling, sharing, or distributing any work without prior approval. Confidentiality of student, customer, client, and company data is paramount, and any breach of data security guidelines will not be tolerated.</p>
+
+    <h3>Termination</h3>
+    <p>Your employment may be terminated under the following circumstances:</p>
+    <ul>
+        <li>Failure, refusal, or neglect to perform assigned duties.</li>
+        <li>Loss of confidence in you due to any actions committed by you.</li>
+        <li>Being found guilty of fraud, insubordination, or misconduct.</li>
+        <li>Being deemed unfit for responsible work due to misconduct or moral turpitude.</li>
+        <li>Engaging in acts prejudicial to the relationship between you and the company.</li>
+        <li>Breach of any terms outlined in this offer letter.</li>
+    </ul>
+
+    <h3>Non-Engagement with Other Organizations</h3>
+    <p>During your employment, you shall not engage, directly or indirectly, with any other organization. Any breach of this condition may result in termination and liability for liquidated damages to the company.</p>
+
+    <h3>Termination and Notice Period</h3>
+    <p>Under normal circumstances, you may terminate this employment by providing a 30-day notice without assigning any reason. The company, however, reserves the right to terminate this agreement immediately in cases of disciplinary behavior or failure to serve the notice period. In such instances, an Experience Certificate/Letter of Recommendation (LOR) or Full and Final settlement will not be provided.</p>
+
+    <h3>Professional Conduct</h3>
+    <p>We expect you to conduct yourself with utmost professionalism and respect when interacting with managers, team members, colleagues, clients, and customers.</p>
+
+    <h3>Compensation and Benefits</h3>
+    <p>Your role as a {{ job_title }} will have a starting stipend/salary of INR <strong>{{ salary }}</strong>, payable in [{{ payable }}], with a potential for growth based on performance and project milestones. Exceptional performance over time may lead to additional roles and responsibilities within the company.</p>
+
+    <p>By signing this letter, you acknowledge that you have read, understood, and agreed to the terms and conditions presented in this Job Offer Letter and Annexure. Please sign and return this letter by email.</p>
+
+    <div class="signature-section">
+        <p>Date: __________________</p>
+        <p>Name: __________________</p>
+        <p>Signature: ________________</p>
+    </div>
+
+    <p>We are thrilled to have you join us and are confident that your dedication and skills will contribute significantly to MutaEngine's success. If you have any questions or need further information, please feel free to reach out to us.</p>
+
+    <div class="">
+        <p>Welcome to the Team!</p>
+        <p>Best Regards,</p>
+        <p>Signature of Simran Maam</p>
+        <p><strong>Simran Arun Gupta</strong></p>
+        <p>Founding Member and Project Manager<br>MutaEngine Private Limited</p>
+    </div>
+</div>
 
 <!-- Footer Section -->
 <div class="footer">

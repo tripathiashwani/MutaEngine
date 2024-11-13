@@ -174,7 +174,7 @@ class AssignmentSubmissionsSerializer(serializers.ModelSerializer):
         offer_letter_relative_path = None
         request = self.context['request']
         offer_details = request.data.get('offer_details')
-        manager_name = request.data.get('manager_name')
+        manager_name = f"{application.manager.first_name} {application.manager.last_name}" # type: ignore
         performance_bonus = request.data.get('performance_bonus')
         base_salary = request.data.get('base_salary')
 
@@ -203,18 +203,23 @@ class AssignmentSubmissionsSerializer(serializers.ModelSerializer):
         #         print(f"Error saving resume: {e}")
 
         # offer_letter_file_html = request.FILES.get('offer_letter_html')
+        from datetime import datetime
 
         context_data = {
+            "today_day": datetime.now().date(),
             "applicant_name": applicant_name,
-            "Job Title": application.job_template.title,
-            "Company Name": company_name,
-            "Department": application.job_template.department,
-            "Start Date": application.job_template.joining_date,  # type: ignore
-            "Supervisor": f"{application.manager.first_name} {application.manager.last_name}",  # type: ignore
-            "Location": request.data.get('location', 'Location'),
-            "Base Salary": request.data.get('base_salary', 'Salary'),
-            "Performance Bonus": request.data.get('performance_bonus', 'Bonus'),
-            "Acceptance Deadline": application.job_template.deadline,
+            "applicant_email": application.email,
+            "job_title": application.job_template.title,
+            "company_name": company_name,
+            "company_logo": company_logo,
+            "department": application.job_template.department,
+            "start_date": application.job_template.joining_date,  # type: ignore
+            "payable": application.job_template.payable,
+            # "Supervisor": f"{application.manager.first_name} {application.manager.last_name}",  # type: ignore
+            "location": application.job_template.work_location,
+            "salary": application.job_template.ctc,
+            # "Performance Bonus": request.data.get('performance_bonus', 'Bonus'),
+            "deadline": application.job_template.deadline,
             "Company Representative's Name": request.data.get('representative_name', 'Representative'),
             "Company Contact Information": request.data.get('contact_information', 'Contact Info'),
         }

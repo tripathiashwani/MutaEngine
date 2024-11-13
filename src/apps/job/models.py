@@ -54,6 +54,12 @@ class OfferTemplate(BaseModel):
 
     def __str__(self):
         return self.title
+    
+
+class PayableOffer(models.TextChoices):
+    MONTHLY = "monthly","Monthly"
+    BIWEEKLY = "bi-weekly","Bi-weekly"
+    WEEKLY = "weekly","Weekly"
 
 
 class WorkLocationChoices(models.TextChoices):
@@ -85,6 +91,7 @@ class JobTemplate(BaseModel,UserModelMixin):
         choices=WorkType.choices,
         default=WorkType.FULL_TIME
     )
+    payable = models.CharField(max_length=255, blank=True, null=True, default=PayableOffer.MONTHLY)
     position = models.CharField(max_length=255)
     department = models.CharField(max_length=255)
     experience = models.CharField(max_length=255, null=True, blank=True)

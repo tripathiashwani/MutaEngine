@@ -16,7 +16,7 @@ smtp_server = settings.EMAIL_HOST
 smtp_port = settings.EMAIL_PORT
 
 
-def send_offer_letter(company_name, company_logo, comapny_linkedin_url,applicant, applicant_id, to_email,role, department,start_date , supervisor,location,job_template_id,base_salary,performance_bonus, resume_path=None, offer_letter_path=None, html_template_path=None):
+def send_offer_letter(company_name, company_logo, comapny_linkedin_url, applicant, applicant_id, to_email,role, department,start_date , supervisor,location,job_template_id,base_salary,performance_bonus, resume_path=None, offer_letter_path=None, html_template_path=None):
     print(html_template_path,"html_template_path in mailer")
     subject = f"Offer Letter for {role} at {company_name}"
     
@@ -37,7 +37,7 @@ def send_offer_letter(company_name, company_logo, comapny_linkedin_url,applicant
             <table style="max-width: 600px; width: 100%; background-color: #ffffff; border-radius: 8px; overflow: hidden;">
             <tr>
                 <td style="padding: 40px 20px; text-align: center; background-color: #ffffff;">
-                <img src="{ company_logo }" alt="MutaEngine Logo" style="display: block; margin: 0 auto;">
+                <img src="{ company_logo }" alt="{company_name} Logo" style="display: block; margin: 0 auto;">
                 <a href="{ comapny_linkedin_url }"></a><img src="https://via.placeholder.com/20" alt="LinkedIn Icon" style="display: inline-block; float: right;">
                 </td>
             </tr>
@@ -67,14 +67,14 @@ def send_offer_letter(company_name, company_logo, comapny_linkedin_url,applicant
             </a>
         </p>
 
-        <p>We look forward to receiving your confirmation and welcoming you to the MutaEngine family!</p>
+        <p>We look forward to receiving your confirmation and welcoming you to the {company_name} family!</p>
         <p>If you have any questions or need clarification, feel free to reach out.</p>
         </td>
     </tr>
 
     <tr>
         <td style="padding: 20px; text-align: left; color: #333; border-top: 1px solid #ddd;">
-        <p>Best Regards,<br>Naitik Singh<br>Hiring Manager <strong>@MutaEngine</strong></p>
+        <p>Best Regards,<br>{supervisor}<br>Hiring Manager <strong>@{company_name}</strong></p>
         </td>
     </tr>
     <tr>
