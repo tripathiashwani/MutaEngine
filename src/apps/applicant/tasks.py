@@ -53,6 +53,7 @@ def send_offer_letter_email_task(
     offer_letter_file = get_pdf(offer_letter_file_html,applicant_id)
 
     print(offer_letter_file,"offer letter file")
+    offer_letter_relative_path = None
 
     if offer_letter_file:
         try:
